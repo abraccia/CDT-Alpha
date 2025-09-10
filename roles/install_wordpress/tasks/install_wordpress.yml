@@ -1,0 +1,31 @@
+- name: Clear existing webroot
+  ansible.builtin.file:
+    path: /var/www/html/index.html
+    state: absent
+
+- name: Add wordpress files
+  ansible.builtin.copy:
+    src: wordpress-6.8.2.zip
+    dest: /var/www/html/wordpress-6.8.2.zip
+  become: true
+
+- name: Extract wordpress files
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/unzip
+      - /var/www/html/wordpress-6.8.2.zip
+      - -d
+      - /var/www/html/wordpress-6.8.2.zip
+  become: true
+
+- name: Remove wordpress archive
+  ansible.builtin.file:
+    path: /var/www/html/wordpress-6.8.2.zip
+    state: absent
+  become: true
+
+- name: Copy wp-config
+  ansible.builtin.copy:
+    src: wp-config.php
+    dest: /var/www/html/wordpress/
+  become: true
