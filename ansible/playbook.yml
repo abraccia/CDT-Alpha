@@ -1,0 +1,12 @@
+---
+- hosts: linux
+  roles:
+    - sys_update
+
+- hosts: web
+  roles:
+    - install_wordpress
+
+- hosts: database
+  roles:
+    - install_mysql

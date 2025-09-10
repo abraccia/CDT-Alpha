@@ -1,0 +1,8 @@
+all:
+  children:
+    linux:
+      hosts:
+        blog:
+          ansible_host: 10.1.0.10
+        database:
+          ansible_host: 10.1.0.11
