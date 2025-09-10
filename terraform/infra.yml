@@ -1,0 +1,30 @@
+#cloud-config
+hostname: infra
+
+package_reboot_if_required: true
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - wget
+  - vim
+  - openssh-server
+  - tmux
+  - nano
+  - magic-wormhole
+  - software-properties-common
+  - ansible
+
+groups:
+  - greyteam
+
+users:
+  - default
+  - name: greyteam
+    shell: /bin/bash
+    primary_group: greyteam
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwP0b5HMErj5crcx6sg1CVLc2d0MfupzxltH8Mi/D5t8Dda0BqI/PMwPdZDUb4I5GgwONBxerkJOhPgXmIIrWDlroQ5NzFX0EFVY9tEKy6Iir+Uj19ZD2Sz9vitzRgkJtAj4t/nzXeERNaSgDvNDf9uvZUTSpcG+idsbhCIC/kUE5zgLXaG2wGGgaGbrMqkrAccv9O6OhMuxz8AMnfoDLVpvaMLKNxzeIFfph2W5FalPXv5okbwbuJ0ORFzbl1K/JesrTB+TZ4FfGebu9ikP/ZFOhjcVgmjJWZgszCKm1KLwhTdJSYuZbnWokyAayQRY3PDxgg/1FWhBEJzFqYbehoiUM5c7rcGn999qNAXy9d0AAY3xgLYeY6mesrKlaRYp3XAJmTQTrRPPpji2QmiahUcjvo4etHzR+3MahVP83/U3+Ew2wZSgpqPUlU+zzn3gFEihaChWr07TQPsVmiyTPUtBQst7IS63yhqqfra9d+VXuh5qLaqs6/MhuP5G/0YLM="

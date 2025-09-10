@@ -5,8 +5,8 @@ resource "openstack_networking_network_v2" "cdtalpha_net" {
 
 resource "openstack_networking_subnet_v2" "cdtalpha_subnet" {
   count = 3
+  name = var.subnet_names[count.index]
   network_id = openstack_networking_network_v2.cdtalpha_net.id
-  enable_dhcp = false
   ip_version = 4
   cidr = var.subnet_cidrs[count.index]
   gateway_ip = cidrhost(var.subnet_cidrs[count.index], 1)
@@ -16,7 +16,7 @@ resource "openstack_networking_subnet_v2" "cdtalpha_subnet" {
 resource "openstack_networking_router_v2" "cdtalpha_gateway" {
   name = var.gateway_names[count.index]
   count = 3
-  external_network_id = "05131c4f-fa42-4587-9974-0126baa6a924"
+  external_network_id = data.openstack_networking_network_v2.external_net.id
   admin_state_up = true
 }
 
@@ -24,4 +24,8 @@ resource "openstack_networking_router_interface_v2" "team1_gateway_router_e_int"
   count = 3
   router_id = openstack_networking_router_v2.cdtalpha_gateway[count.index].id
   subnet_id = openstack_networking_subnet_v2.cdtalpha_subnet[count.index].id
+}
+
+data "openstack_networking_network_v2" "external_net" {
+  name = var.external_network
 }
