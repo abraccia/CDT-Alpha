@@ -4,7 +4,7 @@
     state: absent
 
 - name: Extract wordpress files
-  ansible.builtine.unarchive:
+  ansible.builtin.unarchive:
     src: wordpress-6.8.2.zip
     dest: /var/www/html/wordpress
 

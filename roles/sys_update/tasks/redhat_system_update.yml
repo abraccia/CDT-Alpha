@@ -1,5 +1,0 @@
-- name: system update for redhat family hosts
-  ansible.builtin.dnf:
-    name: "*"
-    state: latest
-  become: true

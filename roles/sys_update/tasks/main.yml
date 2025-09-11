@@ -1,7 +1,0 @@
-- name: System update for Debian family hosts
-  import_tasks: debian_system_update.yml
-  when: ansible_facts['os_family']|lower == 'debian'
-
-- name: System update for Red Hat family hosts
-  import_tasks: redhat_system_update.yml
-  when: ansible_facts['os_family']|lower == 'redhat'

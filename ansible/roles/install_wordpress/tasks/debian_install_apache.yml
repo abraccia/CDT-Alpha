@@ -1,4 +1,4 @@
-- name: install webserver
+- name: Install webserver
   ansible.builtin.apt:
     name:
       - apache2
@@ -7,8 +7,8 @@
       - php-gd
       - php-mbstring
       - php-xml
-      - php-xmlrpc 
+      - php-xmlrpc
       - php-soap
-      - php-intl 
+      - php-intl
       - php-zip
   become: true
