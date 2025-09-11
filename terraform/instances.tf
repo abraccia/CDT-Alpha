@@ -98,7 +98,7 @@ resource "openstack_compute_instance_v2" "infra" {
 
 resource "openstack_compute_instance_v2" "red_box" {
     name = "kali${count.index}"
-    count = 10
+    count = 1
     flavor_name = var.linux_flavor
     image_name = var.kali_image_name
     user_data = file("cloudinit.yml")

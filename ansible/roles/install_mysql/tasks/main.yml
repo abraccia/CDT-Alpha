@@ -1,0 +1,32 @@
+- name: Install MySQL
+  ansible.builtin.apt:
+    name:
+      - mysql-server
+      - python3-pymysql
+      - mysql-client
+  become: true
+
+- name: Set MySQL remote listening
+  ansible.builtin.copy:
+    src: mysql.cnf
+    dest: /etc/mysql/conf.d/mysql.cnf
+    mode: '644'
+    owner: root
+    group: root
+  become: true
+
+- name: Create WordPress database
+  community.mysql.mysql_db:
+    name: "wpdb"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+  become: true
+
+- name: Create WordPress database user
+  community.mysql.mysql_user:
+    name: "wordpress"
+    plugin: caching_sha2_password
+    plugin_auth_string: "ChangeMe123!"
+    priv: "wpdb.*:ALL"
+    login_unix_socket: /run/mysqld/mysqld.sock
+  become: true

@@ -1,0 +1,21 @@
+- name: install webserver
+  ansible.builtin.dnf:
+    name:
+      - httpd
+      - php
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-xml
+      - php-xmlrpc 
+      - php-soap
+      - php-intl 
+      - php-zip
+  become: true
+
+- name: configure firewall
+  ansible.posix.firewalld:
+    permanent: true
+    service: http
+    state: enabled
+    immediate: true
