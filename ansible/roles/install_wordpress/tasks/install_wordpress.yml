@@ -2,11 +2,20 @@
   ansible.builtin.file:
     path: /var/www/html/index.html
     state: absent
+  become: true
+
+- name: Remove default apache virtual host
+  ansible.builtin.file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  become: true
+
 
 - name: Extract wordpress files
   ansible.builtin.unarchive:
     src: wordpress-6.8.2.zip
-    dest: /var/www/html/wordpress
+    dest: /var/www/html/
+  become: true
 
 - name: Remove wordpress archive
   ansible.builtin.file:
@@ -19,3 +28,25 @@
     src: wp-config.php
     dest: /var/www/html/wordpress/
   become: true
+
+- name: Copy wordpress virtual host file
+  ansible.builtin.copy:
+    src: wordpress.conf
+    dest: /etc/apache2/sites-available/
+  become: true
+
+- name: Symlink wordpres.conf to enable
+  ansible.builtin.file:
+    src: /etc/apache2/sites-available/wordpress.conf
+    dest: /etc/apache2/sites-enabled/wordpress.conf
+    state: link
+    owner: root
+    group: root
+    mode: '644'
+  become: true
+
+- name: Enable apache
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: true

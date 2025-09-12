@@ -11,6 +11,8 @@
       - php-soap
       - php-intl 
       - php-zip
+      - php-mysql
+      - unzip
   become: true
 
 - name: configure firewall

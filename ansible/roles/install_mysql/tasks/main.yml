@@ -6,10 +6,16 @@
       - mysql-client
   become: true
 
+- name: Clear remote mysql.conf.d
+  ansible.builtin.file:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    state: absent
+  become: true
+
 - name: Set MySQL remote listening
   ansible.builtin.copy:
     src: mysql.cnf
-    dest: /etc/mysql/conf.d/mysql.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
     mode: '644'
     owner: root
     group: root
@@ -25,6 +31,7 @@
 - name: Create WordPress database user
   community.mysql.mysql_user:
     name: "wordpress"
+    host: "%"
     plugin: caching_sha2_password
     plugin_auth_string: "ChangeMe123!"
     priv: "wpdb.*:ALL"
