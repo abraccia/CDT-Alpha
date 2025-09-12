@@ -89,11 +89,6 @@ resource "openstack_compute_instance_v2" "infra" {
         uuid = openstack_networking_network_v2.cdtalpha_net.id
         fixed_ip_v4 = cidrhost(var.infra_cidr, 10)
     }
-
-    network {
-        uuid = openstack_networking_network_v2.cdtalpha_net.id
-        fixed_ip_v4 = cidrhost(var.blueteam_cidr, 100)
-    }
 }
 
 resource "openstack_compute_instance_v2" "red_box" {

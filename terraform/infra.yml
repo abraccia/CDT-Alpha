@@ -15,6 +15,7 @@ packages:
   - magic-wormhole
   - software-properties-common
   - ansible
+  - git
 
 groups:
   - greyteam
