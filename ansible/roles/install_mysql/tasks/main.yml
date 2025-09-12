@@ -14,7 +14,7 @@
 
 - name: Set MySQL remote listening
   ansible.builtin.copy:
-    src: mysql.cnf
+    src: mysqld.cnf
     dest: /etc/mysql/mysql.conf.d/mysqld.cnf
     mode: '644'
     owner: root
