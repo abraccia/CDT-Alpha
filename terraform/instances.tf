@@ -87,7 +87,6 @@ resource "openstack_compute_instance_v2" "infra" {
 
     network {
         uuid = data.openstack_networking_network_v2.external_net.id
-        fixed_ip_v4 = "100.65.5.11"
     }
 
     network {
