@@ -1,28 +1,34 @@
+
+# Delete all files in Apache default webroot
 - name: Clear existing webroot
   ansible.builtin.file:
     path: /var/www/html/index.html
     state: absent
   become: true
 
+# Remove default virtual host
 - name: Remove default apache virtual host
   ansible.builtin.file:
     path: /etc/apache2/sites-enabled/000-default.conf
     state: absent
   become: true
 
-
+# Extract wordpress server files into target webroot
 - name: Extract wordpress files
   ansible.builtin.unarchive:
     src: wordpress-6.8.2.zip
     dest: /var/www/html/
   become: true
 
+# Ensure wordpress archive is deletec
 - name: Remove wordpress archive
   ansible.builtin.file:
     path: /var/www/html/wordpress-6.8.2.zip
     state: absent
   become: true
 
+# Copy wp-config.php to target host
+# Note: variables DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME will need to be changed depending on deployment environment
 - name: Copy wp-config
   ansible.builtin.copy:
     src: wp-config.php
@@ -35,6 +41,7 @@
     dest: /etc/apache2/sites-available/
   become: true
 
+# Enable wordpress
 - name: Symlink wordpres.conf to enable
   ansible.builtin.file:
     src: /etc/apache2/sites-available/wordpress.conf
@@ -45,8 +52,10 @@
     mode: '644'
   become: true
 
+# Restart Apache to apply Virtual Host configuration changes
 - name: Enable apache
   ansible.builtin.service:
     name: apache2
-    state: started
+    state: restarted
     enabled: true
+  become: true

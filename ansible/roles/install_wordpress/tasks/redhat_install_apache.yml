@@ -15,6 +15,7 @@
       - unzip
   become: true
 
+# Configure firewalld if running on a redhat-family system
 - name: configure firewall
   ansible.posix.firewalld:
     permanent: true

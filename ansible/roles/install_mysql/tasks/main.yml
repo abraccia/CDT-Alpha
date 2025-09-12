@@ -6,12 +6,14 @@
       - mysql-client
   become: true
 
+# Delete existing mysqld.cnf file
 - name: Clear remote mysql.conf.d
   ansible.builtin.file:
     path: /etc/mysql/mysql.conf.d/mysqld.cnf
     state: absent
   become: true
 
+# Copy custom mysqld.cnf file to enable remote listening
 - name: Set MySQL remote listening
   ansible.builtin.copy:
     src: mysqld.cnf
@@ -21,6 +23,7 @@
     group: root
   become: true
 
+# Create the database to be used by the WordPress server
 - name: Create WordPress database
   community.mysql.mysql_db:
     name: "wpdb"
@@ -28,6 +31,7 @@
     login_unix_socket: /run/mysqld/mysqld.sock
   become: true
 
+# Create the user WordPress will use for database access
 - name: Create WordPress database user
   community.mysql.mysql_user:
     name: "wordpress"
@@ -37,3 +41,10 @@
     priv: "wpdb.*:ALL"
     login_unix_socket: /run/mysqld/mysqld.sock
   become: true
+
+# Restart MySQL to apply config changes
+- name: Restart MySql
+  ansible.builtin.service:
+    name: mysql
+    state: restarted
+    enabled: true
