@@ -48,3 +48,4 @@
     name: mysql
     state: restarted
     enabled: true
+  become: true

@@ -3,6 +3,11 @@ data "openstack_images_image_v2" "ubuntu_image" {
     most_recent = true
 }
 
+data "openstack_images_image_v2" "debian_image" {
+    name = var.debian_image_name
+    most_recent = true
+}
+
 data "openstack_images_image_v2" "kali_image" {
     name = var.kali_image_name
     most_recent = true
@@ -73,7 +78,7 @@ resource "openstack_compute_instance_v2" "infra" {
     key_pair = var.keypair
 
     block_device {
-        uuid = data.openstack_images_image_v2.ubuntu_image.id
+        uuid = data.openstack_images_image_v2.debian_image.id
         source_type = "image"
         destination_type = "volume"
         volume_size = 15
