@@ -1,0 +1,43 @@
+- name: Install ssh
+  ansible.builtin.package:
+    name: openssh-server
+    state: latest
+
+# start 3 features
+- name: Don't permit root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+    backup: yes
+
+- name: Create a dedicated ssh user
+  ansible.builtin.user:
+    name: "{{ ssh_user }}"
+    shell: /bin/bash
+    create_home: yes
+    password: "{{ ssh_user_password | password_hash('sha512', salt) }}"
+
+- name: Restrict login to ssh_user
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?AllowUsers'
+    line: 'AllowUsers {{ ssh_user }}'
+    backup: yes
+# end features
+
+- name: Restart ssh service
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  async: 10
+  poll: 0
+
+- name: Get ssh status
+  ansible.builtin.systemd:
+    name: ssh.service
+  register: ssh_status
+
+- name: Print ssh status
+  debug:
+    msg: "ssh status: {{ ssh_status.status.ActiveState }}"
