@@ -1,0 +1,42 @@
+---
+- name: Mount SMB
+  hosts: all
+  vars:
+    smb_share: "/smb/share"
+    smb_user: "ubuntu"
+    smb_password: "student"
+    mount_point: "/mnt/share"
+  tasks:
+    - name: Install CIFS
+      ansible.builtin.package:
+        name: cifs-utils
+        state: present
+      when: ansible_os_family != "Windows"
+
+    - name: Create Mount Poin
+      ansible.builtin.file:
+        path: "{{mount_point}}"
+        state: directory
+        mode: '0755'
+      when: ansible_os_family != "Windows"
+
+    - name: Mount SMB folder
+      ansible.posix.mount:
+        src: "{{smb_share}}"
+        path: "{{mount_point}}"
+        fstype: cifs
+        opts: "username={{smb_user}},password{{smb_password}}"
+        state: mounted
+      when: ansible_os_family != "Windows"
+
+    - name: Mount SMB (Windows)
+      ansible.windows.win_share:
+        name: "share"
+        path: "C:\\share"
+        full: "Administrators"
+        read: "Users"
+        list: true
+        description: "Public SMB"
+
+      when: ansible_os_family == "Windows" 
+
