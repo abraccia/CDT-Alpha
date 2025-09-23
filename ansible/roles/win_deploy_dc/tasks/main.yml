@@ -1,0 +1,8 @@
+- name: Deploy domain controller
+  micrsosoft.ad.domain_controller:
+    dns_domain_name: troy.cdtalpha.cyberrange.rit.edu
+    domain_admin_user: Administrator
+    domain_admin_password: Password123!
+    state: domain_controller
+    install_dns: true
+    reboot: true

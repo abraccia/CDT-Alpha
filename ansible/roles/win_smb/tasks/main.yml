@@ -1,0 +1,8 @@
+# Author: Jon Rodriguez
+- name: Deploy SMB Ubuntu
+  ansible.builtin.import_tasks: ubuntu_smb.yml
+  when: ansible_facts['os_family'] == 'debian'
+
+- name: Deploy SMB windows
+  ansible.builtin.import_tasks: win_smb.yml
+  when: ansible_facts['os_family'] == 'windows'

@@ -1,0 +1,8 @@
+- name: Join windows host to domain
+  micrsosoft.ad.membership:
+    dns_domain_name: troy.cdtalpha.cyberrange.rit.edu
+    domain_admin_user: Administrator
+    domain_admin_password: Password123!
+    domain_server: {{ dc.ansible_host }}
+    hostname:  {{ item }}
+    reboot: true
