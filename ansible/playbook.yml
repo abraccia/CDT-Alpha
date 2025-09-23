@@ -10,3 +10,11 @@
 - hosts: database
   roles:
     - install_mysql
+
+- hosts: dc
+  roles:
+    - win_deploy_dc
+
+- hosts: rdp,smb
+  roles:
+    - win_join_domain
