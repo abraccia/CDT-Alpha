@@ -1,5 +1,5 @@
 - name: Deploy domain controller
-  micrsosoft.ad.domain_controller:
+  microsoft.ad.domain_controller:
     dns_domain_name: troy.cdtalpha.cyberrange.rit.edu
     domain_admin_user: Administrator
     domain_admin_password: Password123!
