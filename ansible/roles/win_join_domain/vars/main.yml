@@ -1,0 +1,5 @@
+ansible_connection: winrm
+ansible_winrm_transport: basic
+ansible_user: ansible
+ansible_password: Password123!
+ansible_winrm_cerver_cert_validation: ignore
