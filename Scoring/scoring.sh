@@ -1,27 +1,88 @@
 #!/usr/bin/env bash
+# Minimal concurrent scoring (ICMP + TCP) in Bash.
 
-# Minimal probes for: ICMP, SSH, FTP, SMB, HTTP, HTTPS, WordPress, RDP, SMTP
+set -euo pipefail
 
-T=3
+# ---- CONFIG -------------------------------------------------
+HOSTS=(10.1.0.1 10.1.0.2 10.1.0.3 10.1.0.10 10.1.0.11 10.1.0.12)
 
-icmp() { ping -c1 -W$T "$1" >/dev/null 2>&1; }
-tcp()  { timeout $T bash -c ":</dev/tcp/$1/$2" >/dev/null 2>&1; }
-http() { curl -sS --max-time $T -o /dev/null -w "%{http_code}" "http://$1/"    | grep -qE '^(2|3)'; }
-https(){ curl -ksS --max-time $T -o /dev/null -w "%{http_code}" "https://$1/"  | grep -qE '^(2|3)'; }
-wp()   { curl -sS -L --max-time $T "http://$1/wp-login.php" 2>/dev/null | grep -qiE 'wp-login|wordpress' \
-      || curl -sS -L --max-time $T "http://$1/" 2>/dev/null | grep -qiE 'wp-|wordpress'; }
+# SERVICES items: "Label:Type:Port" where Type is icmp|tcp; Port is ignored for icmp
+SERVICES=(
+  "ICMP:icmp:-"
+  "SSH:tcp:22"
+  "HTTP:tcp:80"
+  "FTP:tcp:21"
+  "SMTP:tcp:25"
+  "LDAP:tcp:389"
+  "RDP:tcp:3389"
+  "MySQL:tcp:3306"
+)
 
-chk()  { if "$2" "$1" ${3:-}; then printf "%-16s %-10s %s\n" "$1" "$3$2" "UP"; else printf "%-16s %-10s %s\n" "$1" "$3$2" "DOWN"; fi; }
+INTERVAL=60          # seconds between refreshes
+TCP_TIMEOUT=2        # seconds for TCP connect
+MAX_JOBS=32          # throttle concurrency
 
-for h in "$@"; do
-  echo "== $h =="
-  chk "$h" icmp
-  chk "$h" tcp    22     # SSH
-  chk "$h" tcp    21     # FTP
-  chk "$h" tcp    445    # SMB
-  chk "$h" http           # HTTP
-  chk "$h" https          # HTTPS
-  if wp "$h"; then printf "%-16s %-10s %s\n" "$h" "wordpress" "UP"; else printf "%-16s %-10s %s\n" "$h" "wordpress" "DOWN"; fi
-  chk "$h" tcp    3389   # RDP
-  chk "$h" tcp    25     # SMTP
+# ---- FUNCS --------------------------------------------------
+check_icmp() {
+  local ip="$1"
+  # Linux/macOS: -c 1 one echo; -W 1 one-second deadline (ms on macOS BSD ping uses -W timeout in ms; this still works as short)
+  ping -c 1 -W 1 "$ip" >/dev/null 2>&1
+}
+
+check_tcp() {
+  local ip="$1" port="$2"
+  # Use bash /dev/tcp with a timeout wrapper
+  timeout "${TCP_TIMEOUT}" bash -c "exec 3<>/dev/tcp/${ip}/${port}" >/dev/null 2>&1
+}
+
+# Throttle background jobs
+wait_for_slot() {
+  local current
+  while :; do
+    current=$(jobs -r | wc -l | tr -d ' ')
+    [[ "$current" -lt "$MAX_JOBS" ]] && break
+    sleep 0.05
+  done
+}
+
+draw_table() {
+  local file="$1"
+  # Sort by IP then Service for stable display
+  sort -t$'\t' -k1,1V -k2,2 "$file" | awk -F'\t' '
+    BEGIN{
+      hostW=15; svcW=10; stW=6;
+      sep=sprintf("%" (hostW+svcW+stW+4) "s",""); gsub(/ /,"-",sep);
+      printf "%s\n%-"hostW"s  %- "svcW"s  %- "stW "s\n%s\n", sep, "Host", "Service", "Status", sep;
+    }
+    { printf "%-"hostW"s  %- "svcW "s  %- "stW "s\n", $1, $2, $3 }
+    END{ print sep }
+  '
+}
+
+# ---- MAIN LOOP ----------------------------------------------
+while true; do
+  tmp="$(mktemp)"
+  # launch checks
+  for ip in "${HOSTS[@]}"; do
+    for item in "${SERVICES[@]}"; do
+      IFS=':' read -r label type port <<<"$item"
+      wait_for_slot
+      {
+        if [[ "$type" == "icmp" ]]; then
+          if check_icmp "$ip"; then status="UP"; else status="DOWN"; fi
+        else
+          if check_tcp "$ip" "$port"; then status="UP"; else status="DOWN"; fi
+        fi
+        printf "%s\t%s\t%s\n" "$ip" "$label" "$status"
+      } &
+    done
+  done
+  wait
+
+  # Clear and render
+  printf "\033[2J\033[H"
+  draw_table "$tmp"
+  rm -f "$tmp"
+
+  sleep "$INTERVAL"
 done
