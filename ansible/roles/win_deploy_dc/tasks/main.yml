@@ -1,21 +1,19 @@
 - name: Install ADDS
-  ansible.windows.win_features:
+  ansible.windows.win_feature:
     name: AD-Domain-Services
     state: present
     include_management_tools: true
-    
+  notify: "win_deploy_dc : Win_reboot"
+
 - name: Install DNS
-  ansible.windows.win_features:
+  ansible.windows.win_feature:
     name: DNS
     state: present
     include_management_tools: true
 
-- name: Deploy domain controller
-  microsoft.ad.domain_controller:
-    dns_domain_name: troy.cdtalpha.cyberrange.rit.edu
-    domain_admin_user: Administrator
-    domain_admin_password: Password123!
+- name: Create domain
+  microsoft.ad.domain:
+    dns_domain_name: "troy.cdtalpha"
     safe_mode_password: Password123!
-    state: domain_controller
-    install_dns: true
-    reboot: true
+    create_dns_delegation: false
+  notify: "win_deploy_dc : Win_reboot"

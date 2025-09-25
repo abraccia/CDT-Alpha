@@ -26,6 +26,9 @@ $tokenFilterParams = @{
 }
 New-ItemProperty @tokenFilterParams
 
+Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
+Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true
+
 Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString "Password123!" -AsPlainText -Force) -PasswordNeverExpires
 New-LocalUser -Name "ansible" -Password (ConvertTo-SecureString "Password123!" -AsPlainText -Force) -PasswordNeverExpires
 Add-LocalGroupMember -Group "Administrators" -Member "ansible"

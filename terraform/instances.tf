@@ -49,7 +49,7 @@ resource "openstack_compute_instance_v2" "windows_host" {
     flavor_name = var.windows_flavor
     image_name = var.windows_image_name
 
-    user_data = file("ansible_prep.ps1")
+    user_data = file("windows_init.ps1")
 
     key_pair = var.keypair
 
