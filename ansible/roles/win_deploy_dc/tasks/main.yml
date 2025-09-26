@@ -34,6 +34,7 @@
     dns_domain_name: "troy.cdtalpha"
     domain_admin_user: "Administrator@troy.cdtalpha"
     domain_admin_password: "Password123!"
+    safe_mode_password: "Password123!"
     state: "domain_controller"
   register: promote_result
 
