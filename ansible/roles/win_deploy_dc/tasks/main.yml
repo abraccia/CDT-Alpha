@@ -3,7 +3,12 @@
     name: AD-Domain-Services
     state: present
     include_management_tools: true
-  notify: "Win_reboot"
+  register: ad_feature_result
+
+- name: ADDS reboot if required
+  ansible.windows.win_reboot:
+    reboot_timeout: 600
+  when: ad_feature_result.reboot_required
 
 - name: Install DNS
   ansible.windows.win_feature:
@@ -17,15 +22,25 @@
     domain_netbios_name: "troy"
     safe_mode_password: Password123!
     create_dns_delegation: false
-  notify: "win_deploy_dc : Win_reboot"
+  register: domain_install
 
-- name: Promote to Domain Controller
+- name: Domain reboot if required
+  ansible.windows.win_reboot:
+    timeout: 600
+  when: domain_install.reboot_required
+
+- name: Ensure dc is domain controller
   microsoft.ad.domain_controller:
     dns_domain_name: "troy.cdtalpha"
     domain_admin_user: "Administrator@troy.cdtalpha"
     domain_admin_password: "Password123!"
     state: "domain_controller"
-  notify: "win_deploy_dc : Win_reboot"
+  register: promote_result
+
+- name: Dc promotion reboot if required
+  ansible.windows.win_reboot:
+    timeout: 600
+  when: promote_result.reboot_required
 
 - name: Re-enable WinRM
   ansible.windows.win_service:
