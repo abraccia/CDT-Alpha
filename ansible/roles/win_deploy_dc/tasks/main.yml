@@ -24,6 +24,7 @@
     dns_domain_name: "troy.cdtalpha"
     domain_admin_user: "Administrator@troy.cdtalpha"
     domain_admin_password: "Password123!"
+    state: "domain_controller"
   notify: "win_deploy_dc : Win_reboot"
 
 - name: Re-enable WinRM
