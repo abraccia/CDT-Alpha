@@ -26,7 +26,7 @@
 
 - name: Domain reboot if required
   ansible.windows.win_reboot:
-    timeout: 600
+    reboot_timeout: 600
   when: domain_install.reboot_required
 
 - name: Ensure dc is domain controller
@@ -39,7 +39,7 @@
 
 - name: Dc promotion reboot if required
   ansible.windows.win_reboot:
-    timeout: 600
+    reboot_timeout: 600
   when: promote_result.reboot_required
 
 - name: Re-enable WinRM

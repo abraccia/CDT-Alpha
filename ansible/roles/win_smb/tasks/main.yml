@@ -6,7 +6,7 @@
 
 - name: Hostname reboot if required
   ansible.windows.win_reboot:
-    timeout: 600
+    reboot_timeout: 600
   when: hostname_change_result.reboot_required
 
 - name: Deploy SMB Ubuntu
