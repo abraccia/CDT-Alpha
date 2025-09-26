@@ -18,7 +18,7 @@
 
 - name: Create domain
   microsoft.ad.domain:
-    dns_domain_name: "troy.cdtalpha"
+    dns_domain_name: "troy"
     domain_netbios_name: "troy"
     safe_mode_password: Password123!
     create_dns_delegation: false
@@ -31,8 +31,8 @@
 
 - name: Ensure dc is domain controller
   microsoft.ad.domain_controller:
-    dns_domain_name: "troy.cdtalpha"
-    domain_admin_user: "Administrator@troy.cdtalpha"
+    dns_domain_name: "troy"
+    domain_admin_user: "Administrator@troy"
     domain_admin_password: "Password123!"
     safe_mode_password: "Password123!"
     state: "domain_controller"
