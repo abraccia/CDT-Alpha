@@ -1,4 +1,10 @@
 # Author: Jon Rodriguez
+- name: Set hostname
+  ansible.windows.win_hostname:
+    name: "smb"
+  notify: Win_reboot
+
+
 - name: Mount SMB (Windows)
   ansible.windows.win_share:
     name: "share"
