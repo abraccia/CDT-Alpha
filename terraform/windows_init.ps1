@@ -6,10 +6,10 @@ Enable-PSRemoting -Force
 # Opens port 5985 for all profiles
 $firewallParams = @{
     Action      = 'Allow'
-    Description = 'Inbound rule for Windows Remote Management via WS-Management. [TCP 5985]'
+    Description = 'Inbound rule for Windows Remote Management via WS-Management. [TCP 5986]'
     Direction   = 'Inbound'
-    DisplayName = 'Windows Remote Management (HTTP-In)'
-    LocalPort   = 5985
+    DisplayName = 'Windows Remote Management (HTTPS-In)'
+    LocalPort   = 5986
     Profile     = 'Any'
     Protocol    = 'TCP'
 }
