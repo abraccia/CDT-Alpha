@@ -11,4 +11,5 @@
     domain_admin_user: "Administrator@troy.cdtalpha"
     domain_admin_password: "Password123!"
     domain_server: "10.1.0.18"
+    state: "domain"
     reboot: true
