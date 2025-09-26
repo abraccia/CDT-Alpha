@@ -3,7 +3,7 @@
     name: AD-Domain-Services
     state: present
     include_management_tools: true
-  notify: "win_deploy_dc : Win_reboot"
+  notify: "Win_reboot"
 
 - name: Install DNS
   ansible.windows.win_feature:
