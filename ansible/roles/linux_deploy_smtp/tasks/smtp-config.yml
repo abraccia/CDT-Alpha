@@ -8,3 +8,4 @@
   ansible.builtin.service:
     name: postfix	
     state: restarted		#restart to make sure changes are applied
+  become: true
