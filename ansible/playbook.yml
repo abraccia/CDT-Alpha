@@ -6,44 +6,51 @@
   tags:
     - linux
 
+- hosts: smtp
+  roles: 
+  - linux_deploy_smtp
+  tags:
+    - linux
+    - smtp
+
 - hosts: blog
   roles:
     - install_wordpress
   tags:
     - linux
-    - linux_blog
+    - blog
 
 - hosts: database
   roles:
     - install_mysql
   tags:
     - linux
-    - linux_database
+    - database
 
 - hosts: dc
   roles:
     - win_deploy_dc
   tags:
     - windows
-    - win_dc
+    - dc
 
 - hosts: ssh
   roles:
     - linux_deploy_ssh
   tags:
     - linux
-    - linux_ssh
+    - ssh
 
 - hosts: rdp,smb
   roles:
     - win_join_domain
   tags:
     - windows
-    - win_members
+    - members
 
 - hosts: smb
   roles:
     - win_smb
   tags:
     - windows
-    - win_smb
+    - smb
