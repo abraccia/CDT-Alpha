@@ -11,4 +11,3 @@
 
 - name: Deploy SMB windows
   ansible.builtin.import_tasks: win_smb.yml
-  when: ansible_facts['os_family'] == 'windows'

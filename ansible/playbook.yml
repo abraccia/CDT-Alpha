@@ -8,7 +8,7 @@
 
 - hosts: smtp
   roles: 
-  - linux_deploy_smtp
+    - linux_deploy_smtp
   tags:
     - linux
     - smtp
