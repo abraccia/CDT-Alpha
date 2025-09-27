@@ -1,0 +1,55 @@
+- name: Set DC hostname
+  ansible.windows.win_hostname:
+    name: "dc"
+
+- name: Install ADDS
+  ansible.windows.win_feature:
+    name: AD-Domain-Services
+    state: present
+    include_management_tools: true
+  register: ad_feature_result
+
+- name: ADDS reboot if required
+  ansible.windows.win_reboot:
+    reboot_timeout: 600
+  when: ad_feature_result.reboot_required
+
+- name: Install DNS
+  ansible.windows.win_feature:
+    name: DNS
+    state: present
+    include_management_tools: true
+
+- name: Create domain
+  microsoft.ad.domain:
+    dns_domain_name: "troy.cdtalpha.com"
+    safe_mode_password: Password123!
+    create_dns_delegation: false
+  register: domain_install
+
+- name: Domain reboot if required
+  ansible.windows.win_reboot:
+    reboot_timeout: 600
+  when: domain_install.reboot_required
+
+- name: Ensure dc is domain controller
+  microsoft.ad.domain_controller:
+    dns_domain_name: "troy.cdtalpha.com"
+    domain_admin_user: "Administrator@troy.cdtalpha.com"
+    domain_admin_password: "Password123!"
+    safe_mode_password: "Password123!"
+    state: "domain_controller"
+  register: promote_result
+
+- name: DC promotion reboot if required
+  ansible.windows.win_reboot:
+    reboot_timeout: 600
+  when: promote_result.reboot_required
+
+- name: Re-enable WinRM
+  ansible.windows.win_service:
+    name: WinRM
+    start_mode: auto
+
+- name: Add domain users
+  import_tasks: win_domain_users.yml

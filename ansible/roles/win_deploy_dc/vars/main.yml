@@ -1,0 +1,25 @@
+ansible_connection: winrm
+ansible_winrm_transport: basic
+ansible_user: ansible
+ansible_password: Password123!
+ansible_winrm_server_cert_validation: ignore
+
+win_deploy_dc_password: "Password123!"
+win_deploy_dc_domain_users:
+  - admin
+  - redteam
+  - hector
+  - paris
+  - priam
+  - andromache
+  - rhesus
+  - ajax_the_great
+  - odysseus
+  - menelaus
+  - diomedes
+  - agamemnon
+
+win_deploy_dc_domain_admins:
+  - admin
+  - redteam
+  - hector

@@ -1,0 +1,14 @@
+- name: Setup DNS
+  ansible.windows.win_dns_client:
+    adapter_names: "*"
+    ipv4_addresses:
+      - "10.1.0.18"
+      - "129.21.3.17"
+
+- name: Join windows host to domain
+  microsoft.ad.membership:
+    dns_domain_name: "troy.cdtalpha.com"
+    domain_admin_user: "Administrator@troy.troy.cdtalpha.com"
+    domain_admin_password: "Password123!"
+    state: "domain"
+    reboot: true

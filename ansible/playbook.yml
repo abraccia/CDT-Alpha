@@ -2,10 +2,23 @@
 - hosts: linux
   roles:
     - sys_update
+    - linux_deploy
+  tags:
+    - linux
+
+- hosts: smtp
+  roles: 
+    - linux_deploy_smtp
+  tags:
+    - linux
+    - smtp
 
 - hosts: blog
   roles:
     - install_wordpress
+  tags:
+    - linux
+    - blog
 
 - hosts: database
   roles:
@@ -26,3 +39,34 @@
       - { username: "guest", password: "guest" }
   roles:
     - ftp
+  tags:
+    - linux
+    - database
+
+- hosts: dc
+  roles:
+    - win_deploy_dc
+  tags:
+    - windows
+    - dc
+
+- hosts: ssh
+  roles:
+    - linux_deploy_ssh
+  tags:
+    - linux
+    - ssh
+
+- hosts: rdp,smb
+  roles:
+    - win_join_domain
+  tags:
+    - windows
+    - members
+
+- hosts: smb
+  roles:
+    - win_smb
+  tags:
+    - windows
+    - smb

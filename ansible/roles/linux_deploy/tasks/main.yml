@@ -1,0 +1,6 @@
+# Author: Jon Rodriguez
+- name: Deploy linux folders
+  ansible.builtin.import_tasks: deploy_folders.yml
+
+- name: Deploy linux users
+  ansible.builtin.import_tasks: deploy_users.yml

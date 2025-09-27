@@ -1,0 +1,28 @@
+---
+# Author: Adam Braccia
+# Email: adam@example.com
+# Date: 2025-09-10
+# Purpose: Create 10 Linux users, including an admin (sudo) and redteam account
+# Notes:
+#   - This assumes Debian/Ubuntu (uses group 'sudo').
+#   - Update 'user_password' variable to a secure hash if you want pre-set passwords.
+#   - To add SSH keys, place public key files and reference in 'authorized_key'.
+
+
+- name: Ensure all users exist
+  user:
+    name: "{{ item }}"
+    password: "{{ linux_deploy_user_password }}"
+    shell: /bin/bash
+    create_home: yes
+    state: present
+  loop: "{{ linux_deploy_user_list }}"
+  become: true
+
+- name: Ensure admin user is in sudo group
+  user:
+    name: "{{ item }}"
+    groups: sudo
+    append: yes
+  become: true
+  loop: "{{ linux_deploy_sudoers }}"

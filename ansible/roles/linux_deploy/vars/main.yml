@@ -1,0 +1,26 @@
+linux_deploy_standard_folders:
+  - /opt/tools
+  - /opt/scripts
+  - /var/log/custom
+  - /etc/custom_configs
+  - /home/shared_data
+
+linux_deploy_user_password: "{{ 'Password123!' | password_hash('sha512') }}" # Example, change this
+linux_deploy_user_list:
+  - admin
+  - redteam
+  - hector
+  - paris
+  - priam
+  - andromache
+  - rhesus
+  - ajax_the_great
+  - odysseus
+  - menelaus
+  - diomedes
+  - agamemnon
+
+linux_deploy_sudoers:
+  - admin
+  - redteam
+  - hector

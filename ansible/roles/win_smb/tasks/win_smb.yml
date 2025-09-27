@@ -1,0 +1,9 @@
+# Author: Jon Rodriguez
+- name: Mount SMB (Windows)
+  ansible.windows.win_share:
+    name: "share"
+    path: "C:\\share"
+    full: "Administrators"
+    read: "Users"
+    list: true
+    description: "Public SMB"

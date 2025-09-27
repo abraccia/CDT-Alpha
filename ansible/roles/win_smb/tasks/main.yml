@@ -1,0 +1,13 @@
+# Author: Jon Rodriguez
+- name: Change hostname
+  ansible.windows.win_hostname:
+    name: "smb"
+  register: hostname_change_result
+
+- name: Hostname reboot if required
+  ansible.windows.win_reboot:
+    reboot_timeout: 600
+  when: hostname_change_result.reboot_required
+
+- name: Deploy SMB windows
+  ansible.builtin.import_tasks: win_smb.yml
