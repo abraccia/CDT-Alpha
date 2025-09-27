@@ -17,16 +17,11 @@
     create_home: yes
     state: present
   loop: "{{ linux_deploy_user_list }}"
+  become: true
 
 - name: Ensure admin user is in sudo group
   user:
     name: admin
     groups: sudo
     append: yes
-
-- name: (Optional) Deploy SSH key for admin
-  authorized_key:
-    user: admin
-    state: present
-    key: "{{ lookup('file', './id_rsa.pub') }}"
-  when: lookup('file', './id_rsa.pub', errors='ignore') is not none
+  become: true

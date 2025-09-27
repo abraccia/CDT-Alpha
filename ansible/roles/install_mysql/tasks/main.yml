@@ -1,6 +1,7 @@
 - name: Set database hostname
   ansible.builtin.hostname:
     name: "database"
+  become: true
 
 - name: Install MySQL
   ansible.builtin.apt:

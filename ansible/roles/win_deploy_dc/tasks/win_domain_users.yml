@@ -4,4 +4,4 @@
     password: "{{ win_deploy_dc_password }}"
     enabled: true
     state: present
-  loop: "{{ win_deploy_dc_users }}"
+  loop: "{{ win_deploy_dc_domain_users }}"
