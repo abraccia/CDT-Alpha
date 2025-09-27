@@ -1,0 +1,24 @@
+#!/bin/bash
+# FTP Monitor for Blue Team
+
+LOG_FILE="/var/log/ftp-competition.log"
+FTP_LOG="/var/log/vsftpd.log"
+
+echo "$(date): FTP Competition Monitor Started" >> $LOG_FILE
+
+# Monitor active connections
+netstat -tulpn | grep :21 >> $LOG_FILE
+
+# Check for anonymous logins
+if tail -100 $FTP_LOG | grep -q "anonymous"; then
+    echo "$(date): WARNING - Anonymous FTP login detected" >> $LOG_FILE
+fi
+
+# Check for uploads
+if tail -100 $FTP_LOG | grep -q "OK UPLOAD"; then
+    echo "$(date): FILE UPLOAD DETECTED" >> $LOG_FILE
+fi
+
+# Monitor user activity
+echo "$(date) - Active users:" >> $LOG_FILE
+who >> $LOG_FILE

@@ -1,0 +1,19 @@
+---
+- name: SMTP
+  hosts: smtp		#smtp group in hosts.ini	
+  become: yes 		#gives root priveleeege for tasks
+
+  tasks:
+    - apt:
+        name: postfix
+        state: present			#make sure postfix is installed
+        update_cache: yes		#refresh apt
+
+    - copy:
+        dest: /etc/mail			#location of file
+        content: "smtp example\n"	#content of file
+
+    - service:
+        name: postfix	
+        state: started		#make sure it is running
+        enabled: yes		#make sure it starts on boot

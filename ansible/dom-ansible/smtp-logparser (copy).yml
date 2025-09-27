@@ -1,0 +1,9 @@
+# Dominic Bonanno
+
+# Postfix already logs to /var/log/mail.log
+# BUT logwatch can make those logs more useful
+
+- name: Install Logwatch
+  apt: 
+    name: logwatch
+    state: present

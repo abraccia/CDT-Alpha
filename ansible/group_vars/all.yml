@@ -1,0 +1,18 @@
+#All example variables at the moment
+
+# Database config
+db_name: wordpress_db       # change as needed
+db_user: wp_user            # prefer not to change later
+db_password: password       # change later
+db_root_password: password  # change later
+wordpress_url: https://wordpress.org/latest.tar.gz
+
+# WordPress config
+wp_site_title: "Change name later"
+wp_admin_user: "admin"
+wp_admin_password: "password"
+wp_admin_email: "admin@example.com"
+
+# System config
+server_hostname: "troy.alpha.cdt" #definitely change later
+

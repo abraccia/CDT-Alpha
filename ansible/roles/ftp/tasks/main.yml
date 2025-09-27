@@ -1,0 +1,124 @@
+---
+- name: Install vsftpd and dependencies
+  apt:
+    name:
+      - vsftpd
+      - ftp
+      - lftp
+      - net-tools
+      - iptables-persistent
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install vsftpd if RedHat systems
+  yum:
+    name:
+      - vsftpd
+      - ftp
+      - lftp
+      - net-tools
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Create FTP directory structure
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: ftp
+    mode: '0777'
+  loop:
+    - "{{ anonymous_root }}"
+    - /srv/ftp/upload
+    - /srv/ftp/admin
+
+# TODO: Change content!
+- name: Create fake sensitive data
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ anonymous_root }}/{{ item.filename }}"
+    mode: '0666'
+  loop:
+    - { filename: "secret-plans.txt", content: "CONFIDENTIAL: Plan Trojan Horse\nDate: 2025-12-01\nTarget: Production Server\nCredentials: admin/SuperSecret123!" }
+    - { filename: "user-creds.csv", content: "username,password,email\njdoe,Welcome123,jdoe@company.com\nasmith,Spring2024!,asmith@company.com" }
+    - { filename: "network-diagram.pdf", content: "FAKE NETWORK DIAGRAM - FOR TRAINING ONLY" }
+
+- name: Create weak local users
+  user:
+    name: "{{ item.username }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    shell: /bin/bash
+    groups: ftp
+  loop: "{{ weak_password_users + local_users }}"
+
+- name: Configure vsftpd with vulnerable settings
+  template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd.conf
+    backup: yes
+  notify: restart vsftpd
+
+- name: Enable anonymous write access
+  file:
+    path: "{{ anonymous_root }}/incoming"
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: '0777'
+
+- name: Install and configure FTP monitor script
+  template:
+    src: ftp-monitor.sh.j2
+    dest: /usr/local/bin/ftp-monitor.sh
+    mode: '0755'
+
+- name: Set up monitoring cron job
+  cron:
+    name: "FTP Connection Monitor"
+    minute: "*/5"
+    job: "/usr/local/bin/ftp-monitor.sh"
+
+- name: Configure firewall to allow FTP
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ ftp_port }}"
+    jump: ACCEPT
+    comment: "FTP Server"
+
+- name: Save iptables rules
+  command: iptables-save > /etc/iptables/rules.v4
+  when: ansible_os_family == "Debian"
+
+- name: Start and enable vsftpd service
+  systemd:
+    name: vsftpd
+    state: started
+    enabled: yes
+
+- name: Install and configure fail2ban for blue team monitoring
+  apt:
+    name: fail2ban
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Configure fail2ban for FTP
+  copy:
+    content: |
+      [vsftpd]
+      enabled = true
+      port = ftp
+      filter = vsftpd
+      logpath = /var/log/vsftpd.log
+      maxretry = 3
+      bantime = 3600
+    dest: /etc/fail2ban/jail.d/vsftpd.conf
+
+- name: Ensure logging is enabled
+  lineinfile:
+    path: /etc/vsftpd.conf
+    regex: '^xferlog_file='
+    line: 'xferlog_file=/var/log/vsftpd.log'
+    state: present
+  notify: restart vsftpd

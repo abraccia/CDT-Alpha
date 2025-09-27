@@ -10,3 +10,19 @@
 - hosts: database
   roles:
     - install_mysql
+
+- name: Deploy ftp
+  hosts: ftp_servers
+  become: yes
+  vars:
+    ftp_port: 21
+    anonymous_root: /srv/ftp/pub
+    local_users: 
+      - { username: "admin", password: "admin123" }
+      - { username: "user", password: "password123" }
+      - { username: "ftpadmin", password: "Ftp@2024" }
+    weak_password_users:
+      - { username: "test", password: "test" }
+      - { username: "guest", password: "guest" }
+  roles:
+    - ftp

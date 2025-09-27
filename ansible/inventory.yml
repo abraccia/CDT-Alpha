@@ -6,3 +6,7 @@ all:
           ansible_host: 10.1.0.10
         database:
           ansible_host: 10.1.0.11
+    windows:
+      hosts:
+        whatever:
+          ansible_host:

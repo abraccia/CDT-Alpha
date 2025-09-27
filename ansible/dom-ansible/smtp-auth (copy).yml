@@ -1,0 +1,10 @@
+# Dominic Bonanno
+
+# We can add an auth option to Grey team
+# so that we can decide how secure we want
+# this SMTP server to be.
+
+- name: Install SASL
+  apt:
+    name: libsasl2-modules
+    state: present
