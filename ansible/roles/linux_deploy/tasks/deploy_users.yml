@@ -21,7 +21,8 @@
 
 - name: Ensure admin user is in sudo group
   user:
-    name: admin
+    name: "{{ item }}"
     groups: sudo
     append: yes
   become: true
+  loop: "{{ linux_deploy_sudoers }}"

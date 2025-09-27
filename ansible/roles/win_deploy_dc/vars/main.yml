@@ -18,3 +18,8 @@ win_deploy_dc_domain_users:
   - menelaus
   - diomedes
   - agamemnon
+
+win_deploy_dc_domain_admins:
+  - admin
+  - redteam
+  - hector

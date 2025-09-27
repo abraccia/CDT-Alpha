@@ -6,9 +6,9 @@ This repository contains the code, tools, and documentation prepared by the Fall
 * Dominic Bonanno
 * Logan Burch
 * Masaki Tanaka
-* Aidan Flag
-* Gweneth
-* Aleksi
+* Aidan Ferguson
+* Gweneth Guedez
+* Aleksi Karttunen
 * Miller Swank
-* Patrick P
+* Patrick Purcell
 * Jon Rodriguez

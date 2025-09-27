@@ -19,3 +19,8 @@ linux_deploy_user_list:
   - menelaus
   - diomedes
   - agamemnon
+
+linux_deploy_sudoers:
+  - admin
+  - redteam
+  - hector

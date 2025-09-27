@@ -5,3 +5,12 @@
     enabled: true
     state: present
   loop: "{{ win_deploy_dc_domain_users }}"
+
+- name: Add domain admins
+  microsoft.ad.user:
+    name: "{{ item }}"
+    groups:
+      set:
+        - Domain Admins
+        - Domain Users
+  loop: "{{ win_deploy_dc_domain_admins }}"
