@@ -1,3 +1,7 @@
+- name: Set ssh hostname
+  ansible.builtin.hostname:
+    name: "ssh"
+
 - name: Install ssh
   ansible.builtin.package:
     name: openssh-server

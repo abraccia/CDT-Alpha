@@ -2,6 +2,7 @@
 - hosts: linux
   roles:
     - sys_update
+    - linux_deploy
   tags:
     - linux
 
@@ -10,14 +11,14 @@
     - install_wordpress
   tags:
     - linux
-    - blog
+    - linux_blog
 
 - hosts: database
   roles:
     - install_mysql
   tags:
     - linux
-    - database
+    - linux_database
 
 - hosts: dc
   roles:
@@ -26,9 +27,23 @@
     - windows
     - win_dc
 
+- hosts: ssh
+  roles:
+    - linux_deploy_ssh
+  tags:
+    - linux
+    - linux_ssh
+
 - hosts: rdp,smb
   roles:
     - win_join_domain
   tags:
     - windows
     - win_members
+
+- hosts: smb
+  roles:
+    - win_smb
+  tags:
+    - windows
+    - win_smb

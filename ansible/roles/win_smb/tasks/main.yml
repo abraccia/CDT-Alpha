@@ -2,16 +2,12 @@
 - name: Change hostname
   ansible.windows.win_hostname:
     name: "smb"
-  register: hosname_change_result
+  register: hostname_change_result
 
 - name: Hostname reboot if required
   ansible.windows.win_reboot:
     reboot_timeout: 600
   when: hostname_change_result.reboot_required
-
-- name: Deploy SMB Ubuntu
-  ansible.builtin.import_tasks: ubuntu_smb.yml
-  when: ansible_facts['os_family'] == 'debian'
 
 - name: Deploy SMB windows
   ansible.builtin.import_tasks: win_smb.yml

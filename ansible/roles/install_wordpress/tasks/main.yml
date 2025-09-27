@@ -1,3 +1,7 @@
+- name: Set webserver hostname
+  ansible.builtin.hostname:
+    name: "blog"
+
 - name: Install webserver files Red Hat
   import_tasks: redhat_install_apache.yml
   when: ansible_facts['os_family']|lower == 'redhat'
