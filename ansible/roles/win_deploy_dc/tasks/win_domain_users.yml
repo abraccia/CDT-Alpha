@@ -1,7 +1,7 @@
 - name: Create domain users
   microsoft.ad.user:
-    name: {{ item }}
-    password: {{ win_deploy_dc_password }}
+    name: "{{ item }}"
+    password: "{{ win_deploy_dc_password }}"
     enabled: true
     state: present
-  loop: {{ win_deploy_dc_users }}
+  loop: "{{ win_deploy_dc_users }}"
