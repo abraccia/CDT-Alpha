@@ -1,9 +1,12 @@
 ---
 - name: Mount SMB
+#Make sure the hosts file for the Linux install of ansible contains the target Windows PC as well as the localhost registered
   hosts: all
   vars:
     smb_share: "/smb/share"
+    #replace with appropriate username
     smb_user: "ubuntu"
+    #replace with appropriate password
     smb_password: "student"
     mount_point: "/mnt/share"
   tasks:
@@ -32,6 +35,7 @@
     - name: Mount SMB (Windows)
       ansible.windows.win_share:
         name: "share"
+        #make a share drive on the Windows machine for it to mount to
         path: "C:\\share"
         full: "Administrators"
         read: "Users"
