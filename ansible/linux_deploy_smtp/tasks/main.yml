@@ -1,0 +1,10 @@
+- name: Set hostname for smtp server
+  ansible.builtin.hostname:
+    name: "smtp"
+  become: true
+
+- name: Install packages and basic setup
+  import_tasks: smtp-setup.yml
+
+- name: Configure smtp
+  import_tasks: smtp-config.yml
