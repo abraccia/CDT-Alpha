@@ -1,5 +1,5 @@
 - name: Copy mail file
-  ansible.bulitin.copy:
+  ansible.builtin.copy:
     dest: /etc/mail			#location of file
     content: "smtp example\n"	#content of file
   become: true
@@ -7,5 +7,4 @@
 - name: Restart postfix
   ansible.builtin.service:
     name: postfix	
-    state: restarted		#make sure it is running
-  become: true
+    state: restarted		#restart to make sure changes are applied

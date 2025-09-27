@@ -2,7 +2,7 @@
 # 12 Sep 2025
 # db9063@g.rit.edu
 - name: Install Packages # Postfix is as easy-to-use mail service that uses SMTP
-  apt:
+  ansible.builtin.apt:
     name:
       - postfix
       - libsasl2-modules
@@ -12,7 +12,7 @@
   become: true
 
 - name: Enable Postfix
-  service:
+  ansible.builtin.service:
       name: postfix
       state: started
       enabled: yes 
