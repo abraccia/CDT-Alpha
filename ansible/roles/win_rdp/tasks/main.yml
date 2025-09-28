@@ -18,7 +18,7 @@
     direction: in
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true
 
 - name: Ensure RDP users can log in
   community.windows.win_user_right:
