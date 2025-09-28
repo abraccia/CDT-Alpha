@@ -34,3 +34,5 @@ all:
         smb:
           ansible_host: 10.1.0.19
           service_type: samba
+      vars:
+        ansible_become: false
