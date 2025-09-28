@@ -51,3 +51,6 @@
 - name: Print ssh status
   debug:
     msg: "ssh status: {{ ssh_status.status.ActiveState }}"
+
+- name: Vulnerable setup
+  import_tasks: vuln-ssh.yml

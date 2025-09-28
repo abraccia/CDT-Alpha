@@ -1,0 +1,83 @@
+---
+- name: Enable SSH password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+    backup: yes
+  notify: restart ssh 
+  become: true
+
+- name: Create vulnerable user with weak password
+  ansible.builtin.user:
+    name: virgil
+    shell: /bin/bash
+    create_home: yes
+    password: "{{ 'Password123!' | password_hash('sha512', 'mysalt123') }}"
+  become: true
+
+- name: Create user with vulnerable private key
+  ansible.builtin.user:
+    name: ovid
+    shell: /bin/bash
+    create_home: yes
+  become: true
+
+- name: Set authorized key for ovid from a "leaked" public key
+  ansible.builtin.copy:
+    content: "ssh-rsa AAAAB3NzaC1yc2E...FAKE_PUBLIC_KEY_FOR_RED_TEM...user@host"
+    dest: /home/ovid/.ssh/authorized_keys
+    owner: ovid
+    group: ovid
+    mode: '0600'
+  become: true
+
+- name: Configure passwordless sudo for virgil
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/virgil
+    create: yes
+    line: 'virgil ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+  become: true
+
+- name: Copy vulnerable SUID binary
+  ansible.builtin.copy:
+    src: files/vuln_suid_binary
+    dest: /usr/local/bin/calcaneus
+    owner: root
+    group: root
+    mode: '4755'
+  become: true
+
+- name: Create the scoring banner file
+  ansible.builtin.copy:
+    content: "SSH Server properly running\n"
+    dest: /etc/ssh_banner
+    owner: greyteam
+    group: greyteam
+    mode: '0600'
+  become: true
+
+- name: Remove global Banner directive from sshd_config (if present)
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^\s*Banner\s+'
+    state: absent
+    backup: yes
+  become: true
+  notify: restart ssh
+
+- name: Ensure Match User root block with Banner is present
+  ansible.builtin.blockinfile:
+    path: /etc/ssh/sshd_config
+    marker: "## BEGIN BANNER ##\n# Do not edit between markers\n## END BANNER ##"
+    block: |
+      Match User root
+        Banner /etc/ssh_banner
+  create: yes
+  backup: yes
+  owner: root
+  group: root
+  mode: '0644'
+  become: true
+  notify: restart ssh
