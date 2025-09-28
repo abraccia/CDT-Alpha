@@ -23,7 +23,7 @@
     name: "{{ ssh_user }}"
     shell: /bin/bash
     create_home: yes
-    password: "{{ ssh_user_password | password_hash('sha512', salt) }}"
+    password: "{{ default_password | password_hash('sha512', salt) }}"
   become: true
 
 - name: Restrict login to ssh_user

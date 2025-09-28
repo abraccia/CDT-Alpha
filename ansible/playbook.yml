@@ -34,7 +34,7 @@
     - mysql
 
 - name: Deploy ftp (Linux)
-  hosts: ftp_servers
+  hosts: ftp
   become: yes
   vars:
     ftp_port: 21
@@ -74,7 +74,7 @@
     - win_join_domain
   tags:
     - windows
-    - members
+    - domain_members
 
 - name: Configure SMB (Windows)
   hosts: smb
@@ -83,6 +83,7 @@
   tags:
     - windows
     - smb
+    - domain_members
 
 - name: Configure RDP server
   hosts: rdp
@@ -91,3 +92,4 @@
   tags:
     - windows
     - rdp
+    - domain_members
