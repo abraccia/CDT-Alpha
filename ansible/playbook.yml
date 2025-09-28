@@ -79,8 +79,7 @@
 - name: Configure SMB (Windows)
   hosts: smb
   roles:
-    - smb
-    - windows
+    - win_smb
   tags:
     - windows
     - smb
