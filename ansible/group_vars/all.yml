@@ -1,18 +1,31 @@
-#All example variables at the moment
+---
+# Common variables for all hosts
+ansible_user: redteam
+ansible_password: Password123!
+ansible_connection: ssh
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
-# Database config
-db_name: wordpress_db       # change as needed
-db_user: wp_user            # prefer not to change later
-db_password: password       # change later
-db_root_password: password  # change later
-wordpress_url: https://wordpress.org/latest.tar.gz
+# Default credentials
+users:
+  - username: redteam
+    password: Password123!
+  - username: ajax_the_great
+    password: Password123!
+  - username: odysseus
+    password: Password123!
+  - username: agamemnon
+    password: Password123!
+  - username: menelaus
+    password: Password123!
+  - username: diomedes
+    password: Password123!
 
-# WordPress config
-wp_site_title: "Change name later"
-wp_admin_user: "admin"
-wp_admin_password: "password"
-wp_admin_email: "admin@example.com"
-
-# System config
-server_hostname: "troy.alpha.cdt" #definitely change later
-
+# Service ports
+service_ports:
+  ssh: 22
+  http: 80
+  mysql: 3306
+  smtp: 25
+  ftp: 21
+  rdp: 3389
+  ldap: 389

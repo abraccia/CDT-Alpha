@@ -4,23 +4,33 @@ all:
       hosts:
         blog:
           ansible_host: 10.1.0.10
+          service_type: wordpress
         database:
           ansible_host: 10.1.0.11
+          service_type: mysql
         icmp:
           ansible_host: 10.1.0.12
+          service_type: icmp
         ssh:
           ansible_host: 10.1.0.13
+          service_type: ssh
         smtp:
           ansible_host: 10.1.0.14
+          service_type: smtp
         ftp:
           ansible_host: 10.1.0.15
+          service_type: ftp
         icmp2:
           ansible_host: 10.1.0.16
+          service_type: icmp
     windows:
       hosts:
         rdp:
           ansible_host: 10.1.0.17
+          service_type: rdp
         dc:
           ansible_host: 10.1.0.18
+          service_type: dc
         smb:
           ansible_host: 10.1.0.19
+          service_type: samba

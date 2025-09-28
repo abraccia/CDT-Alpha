@@ -1,0 +1,14 @@
+---
+ansible_connection: ssh
+ansible_become: yes
+ansible_become_method: sudo
+
+# Package management
+package_manager: "{{ 'apt' if ansible_os_family == 'Debian' else 'yum' }}"
+
+# Services to install
+linux_services:
+  - openssh-server
+  - net-tools
+  - curl
+  - wget
