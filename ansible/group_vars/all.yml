@@ -1,4 +1,9 @@
-#All example variables at the moment
+---
+# Common variables for all hosts
+ansible_user: greyteam
+ansible_password: Password123!
+ansible_connection: ssh
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 default_password: "Password123!"
 # Database config
@@ -36,3 +41,13 @@ admins:
   - admin
   - redteam
   - hector
+
+# Service ports
+service_ports:
+  ssh: 22
+  http: 80
+  mysql: 3306
+  smtp: 25
+  ftp: 21
+  rdp: 3389
+  ldap: 389

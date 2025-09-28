@@ -1,33 +1,39 @@
 ---
-- hosts: linux
+- name: Setup Linux servers
+  hosts: linux
+  gather_facts: yes #For logging and functionality whatnot
   roles:
     - sys_update
     - linux_deploy
   tags:
     - linux
+    - base
 
-- hosts: smtp
+- name: Configure SMTP (Linux)
+  hosts: smtp
   roles: 
     - linux_deploy_smtp
   tags:
     - linux
     - smtp
 
-- hosts: blog
+- name: Configure WordPress server
+  hosts: blog
   roles:
     - install_wordpress
   tags:
     - linux
     - blog
 
-- hosts: database
+- name: Configure mysql (Linux)
+  hosts: database
   roles:
     - install_mysql
   tags:
     - linux
-    - database
+    - mysql
 
-- name: Deploy ftp
+- name: Deploy ftp (Linux)
   hosts: ftp
   become: yes
   vars:
@@ -46,32 +52,45 @@
     - linux
     - ftp
 
-- hosts: dc
-  roles:
-    - win_deploy_dc
-  tags:
-    - windows
-    - dc
-
-- hosts: ssh
+- name: Configure ssh (Linux)
+  hosts: ssh
   roles:
     - linux_deploy_ssh
   tags:
     - linux
     - ssh
 
-- hosts: rdp,smb
+- name: Set up Domain Controller (Windows)
+  hosts: dc
+  roles:
+    - win_deploy_dc
+  tags:
+    - windows
+    - dc
+
+- name: Join memebers to domain
+  hosts: rdp,smb
   roles:
     - win_join_domain
   tags:
     - windows
     - domain_members
 
-- hosts: smb
+- name: Configure SMB (Windows)
+  hosts: smb
   roles:
     - smb
     - windows
   tags:
     - windows
     - smb
+    - domain_members
+
+- name: Configure RDP server
+  hosts: rdp
+  roles:
+    - win_rdp
+  tags:
+    - windows
+    - rdp
     - domain_members
