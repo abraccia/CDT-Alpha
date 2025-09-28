@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # unsafe_mail_handler.py
 # WARNING: lets wooden horses in
+# MTAwIG1lYXN1cmVzIG9mIG9pbA==
 import sys
 import os
 import email

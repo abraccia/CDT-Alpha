@@ -1,4 +1,5 @@
 ---
+# Author: Masaki
 - name: Ensure python3 exists
   ansible.builtin.apt:
     name:
@@ -17,26 +18,70 @@
     mode: '0755'
   become: true
 
-- name: Create directory for delivered mails (world-writable)
-  ansible.builtin.file:
-    path: /var/mailstore
-    state: directory
+- name: Create vulnerable alias file with path traversal
+  ansible.builtin.copy:
+    dest: /etc/aliases
+    content: |
+      # Vulnerable aliases file
+      postmaster: root
+      root: /tmp/root_mail
+      admin: |/usr/bin/tee -a /var/mail/admin_log
+      webmaster: |/tmp/process_mail.sh
+      backup: ../backup/mailbox
     owner: root
     group: root
-    mode: '0777'
+    mode: '0644'
   become: true
 
-- name: Provide intentionally permissive header_checks file
-  ansible.builtin.copy:
-    dest: /etc/postfix/header_checks
-    content: |
-      # rule to replace headers
-      # UNTESTED!!
-      /^Subject:/    REPLACE Subject: ${0}
-  owner: root
-  group: root
-  mode: '0644'
+- name: Create world-writable mail directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0777'
+    owner: postfix
+    group: postfix
+  with_items:
+    - /var/mail/vmail
+    - /tmp/mailspool
   become: true
+
+- name: Configure insecure mail directory permissions
+  ansible.builtin.command:
+    cmd: chmod 777 /var/mail
+  become: true
+
+- name: Create vulnerable shell script for alias processing
+  ansible.builtin.copy:
+    dest: /tmp/process_mail.sh
+    content: |
+      #!/bin/bash
+      # Vulnerable mail processor - allows command injection
+      while read line; do
+        echo "$line" >> /var/mail/inbound.log
+        # Dangerous: executing content from email
+        if [[ "$line" == cmd:* ]]; then
+          CMD=$(echo "$line" | cut -d: -f2-)
+          eval "$CMD"
+        fi
+      done
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Create vulnerable header checks file
+  ansible.builtin.copy:
+    dest: /etc/postfix/header_checks_custom
+    content: |
+      # Rules for Headers
+      /^Subject:.*/ IGNORE
+      /^From:.*/ IGNORE
+      /^To:.*/ IGNORE
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify: restart postfix
 
 - name: Create vulnerable body checks that allow CRLF
   ansible.builtin.copy:

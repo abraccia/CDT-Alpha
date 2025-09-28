@@ -1,6 +1,7 @@
 # Definitely secure Postfix configuration
 # See /usr/share/postfix/main.cf.dist for a commented, more complete version
 
+# MTAwIG1lYXN1cmVzIG9mIG9pbA==
 # Debian specific:  Specifying a file name will cause the first
 # line of that file to be used as the name.  The Debian default
 # is /etc/mailname.
@@ -59,9 +60,12 @@ smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
 smtpd_tls_security_level = none #change later!
 smtp_tls_security_level = none  #change later!
 smtpd_use_tls = no              #change later!
-smtp_use_tls = no               $change later!
+smtp_use_tls = no               #change later!
+smtpd_tls_ciphers = LOW         #change later!
+smtpd_tls_auth_only = no        #change later!
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
+smtpd_tls_received_header = no  #change later!
 smtp_tls_CApath=/etc/ssl/certs
-smtp_tls_security_level=may
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
 # hmm i wonder what these do (nothing i promise)
@@ -70,9 +74,9 @@ smtpd_error_sleep_time = 0
 smtpd_soft_error_limit = 0
 smtpd_hard_error_limit = 0
 
-# Turn off header/body checks and content filters
+# Header/body checks and content filters
 header_checks = regexp:/etc/postfix/header_checks
-body_checks = pcre:/etc/postfix/body_checks
+body_checks = pcre:/etc/postfix/body_checks_custom
 
 # Place mail to set directory
 home_mailbox = mail/
