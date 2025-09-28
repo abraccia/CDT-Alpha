@@ -22,3 +22,5 @@ ansible-galaxy collection install ansible.windows
 ansible-galaxy collection install ansible.posix
 ```
 answer found [here](https://github.com/ansible-collections/ansible.windows/issues/282) and [here](https://stackoverflow.com/questions/66335800/error-couldnt-resolve-module-action-this-often-indicates-a-misspelling-miss)
+
+NVM just look at [ansible documentation](https://docs.ansible.com/ansible/latest/collections/community/windows/win_firewall_rule_module.html)
