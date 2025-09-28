@@ -22,6 +22,7 @@ wp_admin_email: "admin@example.com"
 server_hostname: "troy.alpha.cdt" #definitely change later
 
 # Users (Linux and Windows)
+salt: xNqoKZvvICmpd # Password hash salt
 users:
   - admin
   - redteam

@@ -1,0 +1,10 @@
+- name: Enable guest user
+  microsoft.ad.user:
+    name: Guest
+    enabled: true
+    state: present
+
+- name: Disable Kerberos Pre-Authentication
+  ansible.windows.win_powershell:
+    script: "Set-ADAccountControl -Identity \"{{ item }}\" -DoesNotRequirePreAuth $true"
+  loop: "{{ admins }}"
