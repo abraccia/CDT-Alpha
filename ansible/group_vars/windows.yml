@@ -3,7 +3,11 @@ ansible_connection: winrm
 ansible_winrm_transport: basic
 ansible_winrm_server_cert_validation: ignore
 ansible_winrm_message_encryption: auto
+<<<<<<< HEAD
 ansible_user: ansible
+=======
+ansible_user: Administrator
+>>>>>>> 9bdc1730a7b46278e699164574e4f8e7131100a2
 ansible_password: Password123!
 
 # Windows features, idk if this is necessary

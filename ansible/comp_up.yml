@@ -1,0 +1,10 @@
+---
+- name: Complete Competition Infrastructure Setup
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Display setup information
+      debug:
+        msg: "Setting up {{ inventory_hostname }} ({{ ansible_host }}) as {{ service_type }} server"
+
+- import_playbook: playbook.yml

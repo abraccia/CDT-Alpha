@@ -1,9 +1,0 @@
-# Dominic Bonanno
-- name: Sttart postfix
-  hosts: local
-  become: yes
-  tasks:
-    - name: Start Postfix
-      systemd:
-        name: postfix
-        state: started

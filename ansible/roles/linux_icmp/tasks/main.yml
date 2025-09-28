@@ -1,0 +1,14 @@
+---
+# PLACEHOLDER ICMP ANSIBLE
+- name: Set ICMP hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+  become: true
+
+- name: Ensure ICMP response is enabled
+  ansible.builtin.sysctl:
+    name: net.ipv4.icmp_echo_ignore_all
+    value: '0'
+    state: present
+    reload: yes
+  become: true
