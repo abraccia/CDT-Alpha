@@ -67,34 +67,6 @@ resource "openstack_compute_instance_v2" "windows_host" {
     }
 }
 
-
-resource "openstack_compute_instance_v2" "infra" {
-    name = "infra"
-    flavor_name = var.linux_flavor
-    image_name = var.debian_image_name
-    user_data = file("infra.yml")
-    security_groups = [ "default", "ssh" ]
-
-    key_pair = var.keypair
-
-    block_device {
-        uuid = data.openstack_images_image_v2.debian_image.id
-        source_type = "image"
-        destination_type = "volume"
-        volume_size = 15
-        delete_on_termination = true
-    }
-
-    network {
-        uuid = data.openstack_networking_network_v2.external_net.id
-    }
-
-    network {
-        uuid = openstack_networking_network_v2.cdtalpha_net.id
-        fixed_ip_v4 = cidrhost(var.infra_cidr, 10)
-    }
-}
-
 resource "openstack_compute_instance_v2" "red_box" {
     name = "kali${count.index}"
     count = 1
