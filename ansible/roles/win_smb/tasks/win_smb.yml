@@ -7,3 +7,18 @@
     read: "Users"
     list: true
     description: "Public SMB"
+
+- name: Allow SMB ports through firewall
+  community.windows.win_firewall_rule:
+    name: "SMB Port {{ item }}"
+    localport: "{{ item }}"
+    action: allow
+    direction: in
+    protocol: TCP
+    state: present
+    enabled: yes
+  loop:
+    - 137
+    - 138
+    - 139
+    - 445
