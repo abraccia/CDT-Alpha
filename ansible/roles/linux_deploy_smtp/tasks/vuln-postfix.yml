@@ -1,13 +1,11 @@
 ---
 # Author: Masaki
-- name: Saving original main.cf just in case
-  ansible.builtin.template:
-    src: /etc/postfix/main.cf
-    dest: /etc/postfix/BAD.cf
-    owner: root
-    group: root
-    mode: '0644'
-  become: true
+# - name: Saving original main.cf just in case
+#   ansible.builtin.copy:
+#     src: /etc/postfix/main.cf
+#     dest: /etc/postfix/deprecated.cf
+#     remote_src: yes
+#   become: true
 
 - name: Deploy vulnerable main.cf
   ansible.builtin.template:
@@ -24,3 +22,32 @@
     state: restarted
     enabled: yes
   become: true
+
+- name: Install iptables
+  apt:
+    name:
+      - net-tools
+      - iptables-persistent
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Configure firewall to allow SMTP
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 25
+    jump: ACCEPT
+    comment: "SMTP Server"
+
+- name: Allow Submission (port 587)
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 587
+    jump: ACCEPT
+    comment: "SMTP Submission, whatever that is"
+
+- name: Save iptables rules
+  command: iptables-save --file /etc/iptables/rules.v4
+  when: ansible_os_family == "Debian"

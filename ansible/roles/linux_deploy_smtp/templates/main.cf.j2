@@ -22,9 +22,6 @@ readme_directory = no
 # fresh installs.
 compatibility_level = 3.6
 
-
-smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 mydestination = $myhostname, smtp, localhost.localdomain, , localhost
@@ -34,8 +31,10 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = all
 
-myhostname = smtp.openstacklocal    # DO NOT CHANGE (regards, white team)
-mydomain = example.local            # change domain!
+# DO NOT CHANGE (regards, white team)
+myhostname = smtp.openstacklocal
+# (dear, white team) change domain!
+mydomain = example.local            
 
 # Allow mail from anywhere (OPEN RELAY)
 mynetworks = 0.0.0.0/0
@@ -52,34 +51,38 @@ smtpd_recipient_restrictions =
     permit
 
 # Auth mechanisms
-smtpd_sasl_security_options = noanonymous, noplaintext
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
 
-# TLS parameters
-smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
-smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
-smtpd_tls_security_level = none #change later!
-smtp_tls_security_level = none  #change later!
-smtpd_use_tls = no              #change later!
-smtp_use_tls = no               #change later!
-smtpd_tls_ciphers = LOW         #change later!
-smtpd_tls_auth_only = no        #change later!
+# TLS parameters, change later!
+#smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem   #i think this broke postfix
+#smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_security_level = none 
+smtp_tls_security_level = none  
+smtpd_use_tls = no              
+smtp_use_tls = no               
+smtpd_tls_ciphers = LOW         
+smtpd_tls_auth_only = no        
 smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
-smtpd_tls_received_header = no  #change later!
+smtpd_tls_received_header = no
 smtp_tls_CApath=/etc/ssl/certs
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
 # hmm i wonder what these do (nothing i promise)
 smtpd_delay_reject = no
 smtpd_error_sleep_time = 0
-smtpd_soft_error_limit = 0
-smtpd_hard_error_limit = 0
+# must be > 0
+smtpd_soft_error_limit = 100
+smtpd_hard_error_limit = 200
 
 # Header/body checks and content filters
-header_checks = regexp:/etc/postfix/header_checks
+header_checks = pcre:/etc/postfix/header_checks_custom
 body_checks = pcre:/etc/postfix/body_checks_custom
 
 # Place mail to set directory
-home_mailbox = mail/
+home_mailbox = Maildir/
 
 # Make sure local transport is standard
 local_transport = local:unix
@@ -90,10 +93,9 @@ mailbox_command = /usr/local/bin/unsafe_mail_handler.py
 # RFC compliance
 disable_vrfy_command = no
 strict_rfc821_envelopes = no
-smtpd_strict_rfc821_envelope = no
+#smtpd_strict_rfc821_envelope = no
 
 # Command restriction and header validation
 smtpd_discard_ehlo_keyword_address_maps =
 smtpd_forbidden_commands =
 smtpd_restriction_classes =
-smtpd_header_checks = pcre:/etc/postfix/header_checks_custom

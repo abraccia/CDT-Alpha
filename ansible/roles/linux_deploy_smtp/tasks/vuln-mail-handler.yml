@@ -81,7 +81,6 @@
     group: root
     mode: '0644'
   become: true
-  notify: restart postfix
 
 - name: Create vulnerable body checks that allow CRLF
   ansible.builtin.copy:
