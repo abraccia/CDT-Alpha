@@ -2,8 +2,6 @@
 ansible_connection: ssh
 ansible_become: yes
 ansible_become_method: sudo
-ssh_user: 'redteam'
-ssh_user_password: 'Password123!'
 
 # Package management
 #package_manager: "{{ 'apt' if ansible_os_family == 'Debian' else 'yum' }}"
