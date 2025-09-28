@@ -23,9 +23,12 @@
 - hosts: database
   roles:
     - install_mysql
+  tags:
+    - linux
+    - database
 
 - name: Deploy ftp
-  hosts: ftp_servers
+  hosts: ftp
   become: yes
   vars:
     ftp_port: 21
@@ -38,10 +41,10 @@
       - { username: "test", password: "test" }
       - { username: "guest", password: "guest" }
   roles:
-    - ftp
+    - linux_ftp
   tags:
     - linux
-    - database
+    - ftp
 
 - hosts: dc
   roles:
@@ -62,11 +65,13 @@
     - win_join_domain
   tags:
     - windows
-    - members
+    - domain_members
 
 - hosts: smb
   roles:
-    - win_smb
+    - smb
+    - windows
   tags:
     - windows
     - smb
+    - domain_members

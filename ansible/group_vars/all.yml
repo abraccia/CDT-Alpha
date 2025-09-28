@@ -1,5 +1,6 @@
 #All example variables at the moment
 
+default_password: "Password123!"
 # Database config
 db_name: wordpress_db       # change as needed
 db_user: wp_user            # prefer not to change later
@@ -16,3 +17,22 @@ wp_admin_email: "admin@example.com"
 # System config
 server_hostname: "troy.alpha.cdt" #definitely change later
 
+# Users (Linux and Windows)
+users:
+  - admin
+  - redteam
+  - hector
+  - paris
+  - priam
+  - andromache
+  - rhesus
+  - ajax_the_great
+  - odysseus
+  - menelaus
+  - diomedes
+  - agamemnon
+
+admins:
+  - admin
+  - redteam
+  - hector

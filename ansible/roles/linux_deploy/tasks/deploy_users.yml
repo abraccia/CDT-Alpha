@@ -12,11 +12,11 @@
 - name: Ensure all users exist
   user:
     name: "{{ item }}"
-    password: "{{ linux_deploy_user_password }}"
+    password: "{{ default_password }}"
     shell: /bin/bash
     create_home: yes
     state: present
-  loop: "{{ linux_deploy_user_list }}"
+  loop: "{{ users }}"
   become: true
 
 - name: Ensure admin user is in sudo group
@@ -25,4 +25,4 @@
     groups: sudo
     append: yes
   become: true
-  loop: "{{ linux_deploy_sudoers }}"
+  loop: "{{ admins }}"
