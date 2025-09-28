@@ -1,5 +1,14 @@
 ---
 # Author: Masaki
+- name: Saving original main.cf just in case
+  ansible.builtin.template:
+    src: /etc/postfix/main.cf
+    dest: /etc/postfix/BAD.cf
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
 - name: Deploy vulnerable main.cf
   ansible.builtin.template:
     src: main.cf.j2
