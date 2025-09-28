@@ -1,29 +1,49 @@
 ---
-# PLACEHOLDER RDP ANSIBLE
-- name: Set RDP hostname
-  ansible.windows.win_hostname:
-    name: "rdp"
+#Author: Gweneth Guedez (gag8985@rit.edu)
+#Date: September 12, 2025
+#Purpose: Configure RDP and firewall on Windows using Ansible
 
-- name: Enable RDP service
-  ansible.windows.win_service:
-    name: TermService
-    state: started
-    start_mode: auto
+- name: Enable and configure RDP on Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Set RDP hostname
+      ansible.windows.win_hostname:
+        name: "rdp"
 
-- name: Configure firewall for RDP
-  ansible.windows.win_firewall_rule:
-    name: "RDP"
-    localport: 3389
-    action: allow
-    direction: in
-    protocol: tcp
-    state: present
-    enabled: true
+    - name: Enable Remote Desktop in registry
+      ansible.windows.win_regedit:
+        path: HKLM:\System\CurrentControlSet\Control\Terminal Server
+        name: fDenyTSConnections
+        value: 0
+        type: dword
 
-- name: Ensure RDP users can log in
-  community.windows.win_user_right:
-    name: SeRemoteInteractiveLogonRight
-    users:
-      - "troy.cdtalpha.com\\redteam"
-      - "troy.cdtalpha.com\\admin"
-    action: add
+    - name: Enable RDP service
+      ansible.windows.win_service:
+        name: TermService
+        state: started
+        start_mode: auto
+
+    - name: Allow RDP through firewall
+      community.windows.win_firewall_rule:
+        name: "Remote Desktop"
+        localport: 3389
+        action: allow
+        direction: in
+        protocol: TCP
+        state: present
+        enabled: yes
+
+    - name: Ensure RDP users can log in
+      ansible.windows.win_user_right:
+        name: SeRemoteInteractiveLogonRight
+        users:
+          - "troy.cdtalpha.com\\redteam"
+          - "troy.cdtalpha.com\\admin"
+        action: add
+
+    - name: Ensure RDP service is running
+      ansible.windows.win_services:
+        name: TermService
+        start_mode: auto
+        state: started

@@ -1,0 +1,1 @@
+openstack server list -f value -c ID | xargs -n1 -P1 openstack server pause
