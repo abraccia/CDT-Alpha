@@ -11,6 +11,13 @@
       - mysql-client
   become: true
 
+- name: Ensure MySQL is running and enabled
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: yes
+  become: true
+
 # Delete existing mysqld.cnf file
 - name: Clear remote mysql.conf.d
   ansible.builtin.file:
