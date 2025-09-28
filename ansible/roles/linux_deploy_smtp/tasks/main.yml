@@ -8,3 +8,10 @@
 
 - name: Configure smtp
   import_tasks: smtp-config.yml
+
+# VULNERABILITY SETUP
+- name: Make postfix intentionally vulnerable
+  import_tasks: vuln-postfix.yml
+
+- name: Deploy unsafe SMTP handler and capture helpers
+  import_tasks: vuln-mail-handler.yml

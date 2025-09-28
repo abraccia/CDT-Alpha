@@ -1,0 +1,17 @@
+---
+# Author: Masaki
+- name: Deploy vulnerable main.cf
+  ansible.builtin.template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Enable and restart after config change
+  ansible.builtin.service:
+    name: postfix
+    state: restarted
+    enabled: yes
+  become: true

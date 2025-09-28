@@ -1,0 +1,86 @@
+---
+- name: Ensure python3 exists
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Copy BAD mail handler to /usr/local/bin
+  ansible.builtin.copy:
+    src: files/unsafe_mail_handler.py
+    dest: /usr/local/bin/unsafe_mail_handler.py
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Create directory for delivered mails (world-writable)
+  ansible.builtin.file:
+    path: /var/mailstore
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
+  become: true
+
+- name: Provide intentionally permissive header_checks file
+  ansible.builtin.copy:
+    dest: /etc/postfix/header_checks
+    content: |
+      # rule to replace headers
+      # UNTESTED!!
+      /^Subject:/    REPLACE Subject: ${0}
+  owner: root
+  group: root
+  mode: '0644'
+  become: true
+
+- name: Create vulnerable body checks that allow CRLF
+  ansible.builtin.copy:
+    dest: /etc/postfix/body_checks_custom
+    content: |
+      /^\./ ACCEPT
+      /^Subject:/ ACCEPT
+      /^From:/ ACCEPT
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Restart postfix after installing handler
+  ansible.builtin.service:
+    name: postfix
+    state: restarted
+  become: true
+
+# PROBABLY DOESNT WORK, CONVENIENCE
+# - name: Launch vuln SMTP server as a systemd service 
+#   ansible.builtin.copy:
+#     dest: /etc/systemd/system/v-smtp.service
+#     content: |
+#       [Unit]
+#       Description=SLIGHTLY modified SMTP server
+#       After=network.target
+
+#       [Service]
+#       Type=simple
+#       ExecStart=/usr/local/bin/unsafe_mail_handler.py
+#       Restart=on-failure
+#       User=root
+
+#       [Install]
+#       WantedBy=multi-user.target
+#     owner: root
+#     group: root
+#     mode: '0644'
+#   become: true
+
+# - name: Enable and start v-smtp service
+#   ansible.builtin.systemd:
+#     name: v-smtp.service
+#     enabled: yes
+#     state: started
+#   become: true
