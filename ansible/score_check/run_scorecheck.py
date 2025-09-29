@@ -1,18 +1,19 @@
 import ansible_runner
 import json
-import re
 from prettytable import PrettyTable
 import time
 
 SERVICE_STATUSES = {
     "icmp": "pending",   # ICMP check (ping)
+    "icmp2": "pending",   # ICMP check (ping)
     "rdp": "pending",    # RDP for Windows
     "ssh": "pending",    # SSH for Linux
-    "mysql": "pending",  # MySQL for Linux
-    "wordpress": "pending",  # HTTP (WordPress) for Linux
+    "database": "pending",  # MySQL for Linux
+    "blog": "pending",  # HTTP (WordPress) for Linux
     "ftp": "pending",    # FTP for Linux (even though it's commented out)
     "smtp": "pending",   # SMTP for Linux
-    "samba": "pending",  # LDAP for Windows (Samba)
+    "smb": "pending",  # LDAP for Windows (Samba)
+    "dc": "pending",
 }
 
 RED_TEAM_SCORE = 0
@@ -75,8 +76,8 @@ def draw_table():
 
 def main():
     while True:
-        draw_table()
         loop_one()
+        draw_table()
         time.sleep(60)
 
 if __name__ == '__main__':
