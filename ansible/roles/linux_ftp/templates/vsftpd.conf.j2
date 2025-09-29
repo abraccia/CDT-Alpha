@@ -11,21 +11,19 @@ use_localtime=YES
 xferlog_enable=YES
 connect_from_port_20=YES
 
-# INTENTIONAL VULNERABILITIES FOR RED TEAM
 # 1. Anonymous write access
 anon_upload_enable=YES
+anon_world_readable_only=YES
 anon_mkdir_write_enable=YES
 anon_other_write_enable=YES
 
-# 2. Weak permissions
+# 2. Permissions
 anon_umask=000
-local_umask=000
 
 # 3. No security restrictions
 chroot_local_user=NO
-allow_writeable_chroot=YES
 
-# 4. Weak authentication settings
+# 4. authentication settings
 session_support=NO
 ssl_enable=NO
 
@@ -34,9 +32,9 @@ ftpd_banner=Welcome to Troy (FTP v2.3.4)
 
 # 6. Directory settings
 anon_root={{ anonymous_root }}
-local_root=/home/$USER
+local_root={{ anonymous_root }}
 
-# 7. Connection settings (vulnerable)
+# 7. Connection settings
 idle_session_timeout=600
 data_connection_timeout=120
 max_clients=100

@@ -102,25 +102,25 @@
 #   when: ansible_os_family == "RedHat"
 #   ignore_errors: yes
 
-- name: Create vsftpd service file
-  copy:
-    content: |
-      [Unit]
-      Description=vsftpd FTP server
-      After=network.target
+# - name: Create vsftpd service file
+#   copy:
+#     content: |
+#       [Unit]
+#       Description=vsftpd FTP server
+#       After=network.target
 
-      [Service]
-      Type=simple
-      ExecStart=/usr/sbin/vsftpd /etc/vsftpd.conf
-      ExecReload=/bin/kill -HUP $MAINPID
-      Restart=on-failure
+#       [Service]
+#       Type=forking
+#       ExecStart=/usr/sbin/vsftpd /etc/vsftpd.conf
+#       ExecReload=/bin/kill -HUP $MAINPID
+#       Restart=on-failure
 
-      [Install]
-      WantedBy=multi-user.target
-    dest: /etc/systemd/system/vsftpd.service
-    mode: '0644'
-  notify:
-    - restart vsftpd
+#       [Install]
+#       WantedBy=multi-user.target
+#     dest: /etc/systemd/system/vsftpd.service
+#     mode: '0644'
+#   notify:
+#     - restart vsftpd
 
 - name: Enable and start vsftpd service
   systemd:
@@ -133,13 +133,13 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: root
+    owner: ftp
     group: ftp
-    mode: '0777'
+    mode: '0555'
   loop:
     - "{{ anonymous_root }}"
-    - /srv/ftp/upload
-    - /srv/ftp/admin
+    - "{{ anonymous_root }}/upload"
+    - "{{ anonymous_root }}/admin"
     - /var/lib/ftp
     - /usr/share/empty
 
@@ -160,7 +160,7 @@
   copy:
     content: "{{ item.content }}"
     dest: "{{ anonymous_root }}/{{ item.filename }}"
-    mode: '0666'
+    mode: '0444'
   loop:
     - { filename: "secret-plans.txt", content: "CONFIDENTIAL: Plan Trojan Horse\nDate: 2025-12-01\nTarget: Production Server\nCredentials: virgil/ArmaVirumqueCano" }
     - { filename: "user-creds.csv", content: "username,password,email\nadministrator,Password123!,Administrator@troy.cdtalpha.com\nestew,MTAwIG1lYXN1cmVzIG9mIG9pbA==,estew@troy.cdtalpha.com" }
@@ -182,13 +182,21 @@
     backup: yes
   notify: restart vsftpd
 
-- name: Enable anonymous write access
-  file:
-    path: "{{ anonymous_root }}/incoming"
-    state: directory
-    owner: ftp
-    group: ftp
-    mode: '0777'
+# - name: Disable anonymous write access
+#   file:
+#     path: "{{ anonymous_root }}/incoming"
+#     state: directory
+#     owner: ftp
+#     group: ftp
+#     mode: '0755'
+
+# - name: Ensure anonymous uploads directory exists with correct permissions
+#   file:
+#     path: "{{ anonymous_root }}/uploads"
+#     state: directory
+#     owner: ftp
+#     group: ftp
+#     mode: '0711'
 
 - name: Install and configure FTP monitor script
   template:
@@ -213,12 +221,6 @@
 - name: Save iptables rules
   command: iptables-save --file /etc/iptables/rules.v4
   when: ansible_os_family == "Debian"
-
-- name: Start and enable vsftpd service
-  systemd:
-    name: vsftpd
-    state: started
-    enabled: yes
 
 - name: Install and configure fail2ban for blue team monitoring
   apt:
