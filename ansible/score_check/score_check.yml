@@ -12,16 +12,6 @@
       tags:
         - icmp
 
-    # Check RDP for Windows
-    - name: Check RDP for Windows
-      wait_for:
-        host: "{{ inventory_hostname }}"
-        port: 3389
-        state: started
-      when: "'windows' in group_names and service_type == 'rdp'"
-      tags:
-        - rdp
-
     # Check SSH for Linux
     - name: Check SSH for Linux
       wait_for:
