@@ -13,7 +13,7 @@
     name: virgil
     shell: /bin/bash
     create_home: yes
-    password: "{{ 'Password123!' | password_hash('sha512', 'mysalt123') }}"
+    password: "{{ 'ArmaVirumqueCano' | password_hash('sha512', 'mysalt123') }}"
   become: true
 
 - name: Create user with vulnerable private key
@@ -26,7 +26,7 @@
 - name: Install leaked public key into ovid's authorized_keys
   ansible.builtin.authorized_key:
     user: ovid
-    key: "ssh-rsa AAAAB3NzaC1yc2E...FAKE_PUBLIC_KEY_FOR_RED_TEM...user@host"
+    key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCgmgoVGO0i7yY2Su2+PD46nt9t6ul4wmiP2KEFpDSTAkJ9TnBc5hu4v0nPOw2MCwUvbCMHMCw0ZGCgoXjsYhe1PISaNSWFwfnkKqM080nXmBJ+idxi1vCmKODkWNR1Y58dqTIMprXcnocRLtIPL91iT5IlBUEB6omWhqfbVGPILQ== ovid@ssh"
     state: present
     manage_dir: yes
   become: true

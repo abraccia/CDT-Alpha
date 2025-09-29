@@ -30,7 +30,7 @@
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?AllowUsers'
-    line: 'AllowUsers {{ ssh_user }} ansible greyteam'
+    line: 'AllowUsers {{ ssh_user }} ansible greyteam virgil ovid'
     backup: yes
   become: true
 # end features
