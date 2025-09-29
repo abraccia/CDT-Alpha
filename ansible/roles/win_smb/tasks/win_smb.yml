@@ -1,4 +1,9 @@
 # Author: Jon Rodriguez
+- name: Ensure the C:\share directory exists
+  ansible.windows.win_file:
+    path: "C:\\share"
+    state: directory
+
 - name: Mount SMB (Windows)
   ansible.windows.win_share:
     name: "share"
