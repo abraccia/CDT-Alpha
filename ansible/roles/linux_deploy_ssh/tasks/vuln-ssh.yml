@@ -74,10 +74,7 @@
     block: |
       Match User root
         Banner /etc/ssh_banner
-  create: yes
-  backup: yes
-  owner: root
-  group: root
-  mode: '0644'
+    create: yes
+    backup: yes
   become: true
   notify: restart ssh
