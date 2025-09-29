@@ -1,25 +1,133 @@
 ---
-- name: Install vsftpd and dependencies
+- name: Set ftp hostname
+  ansible.builtin.hostname:
+    name: "ftp"
+  become: true
+
+- name: Install vsftpd dependencies
   apt:
     name:
-      - vsftpd
       - ftp
       - lftp
       - net-tools
+      - libnsl-dev
+      - gcc
+      - make
+      - libc6-dev
+      - linux-headers-5.15.0-153-generic
+      - libcrypt-dev
+      - libcap-dev
+      - libpam0g-dev
       - iptables-persistent
+      - unzip
     state: present
     update_cache: yes
   when: ansible_os_family == "Debian"
 
-- name: Install vsftpd if RedHat systems
-  yum:
-    name:
-      - vsftpd
-      - ftp
-      - lftp
-      - net-tools
-    state: present
-  when: ansible_os_family == "RedHat"
+- name: Create /usr/include/sys/unistd.h file
+  copy:
+    content: '#include <unistd.h>'
+    dest: /usr/include/sys/unistd.h
+    mode: '0644'
+  when: not ansible_facts['files']['/usr/include/sys/unistd.h'] is defined
+
+# - name: Install if RedHat systems
+#   yum:
+#     name:
+#       - ftp
+#       - lftp
+#       - net-tools
+#     state: present
+#   when: ansible_os_family == "RedHat"
+
+- name: Copy vsftpd source zip to remote host
+  copy:
+    src: vsftpd-2.3.4.zip
+    dest: /tmp/vsftpd-2.3.4.zip
+
+- name: Extract vsftpd source zip
+  ansible.builtin.unarchive:
+    src: /tmp/vsftpd-2.3.4.zip
+    dest: /tmp/
+    remote_src: yes
+    creates: /tmp/vsftpd-2.3.4
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Fix permissions and ownership on extracted vsftpd-2.3.4 directory
+  file:
+    path: /tmp/vsftpd-2.3.4
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Modify Makefile to add -lcrypt
+  ansible.builtin.command:
+    cmd: sed -i 's|^LINK.*|LINK    =       -Wl,-s -lcrypt -lpam -lcap|' Makefile
+  args:
+    chdir: /tmp/vsftpd-2.3.4
+
+- name: Remove line '#define VSF_SYSDEP_HAVE_UTMPX' from sysdeputil.c
+  command: sed -i '/#define VSF_SYSDEP_HAVE_UTMPX/d' sysdeputil.c
+  args:
+    chdir: "/tmp/vsftpd-2.3.4"
+
+- name: Copy vsftpd.conf to /etc
+  copy:
+    src: "/tmp/vsftpd-2.3.4/vsftpd.conf"
+    dest: /etc/sec-vsftpd.conf
+    remote_src: yes
+    mode: '0644'
+
+- name: Build vsftpd from source
+  command: make
+  args:
+    chdir: /tmp/vsftpd-2.3.4
+    creates: /tmp/vsftpd-2.3.4/vsftpd
+
+- name: Install vsftpd binary
+  copy:
+    src: /tmp/vsftpd-2.3.4/vsftpd
+    dest: /usr/sbin/vsftpd
+    mode: '0755'
+    remote_src: yes
+  notify: restart vsftpd
+
+# - name: Force installation of vulnerable vsftpd 2.3.4 (RedHat)
+#   yum:
+#     name: "http://archive.kali.org/old/mirror/metasploitable/vsftpd-2.3.4-1.el5.i386.rpm"
+#   when: ansible_os_family == "RedHat"
+#   ignore_errors: yes
+
+- name: Create vsftpd service file
+  copy:
+    content: |
+      [Unit]
+      Description=vsftpd FTP server
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/sbin/vsftpd /etc/vsftpd.conf
+      ExecReload=/bin/kill -HUP $MAINPID
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/vsftpd.service
+    mode: '0644'
+  notify:
+    - restart vsftpd
+
+- name: Enable and start vsftpd service
+  systemd:
+    name: vsftpd
+    state: started
+    enabled: yes
+    daemon_reload: yes
 
 - name: Create FTP directory structure
   file:
@@ -32,6 +140,20 @@
     - "{{ anonymous_root }}"
     - /srv/ftp/upload
     - /srv/ftp/admin
+    - /var/lib/ftp
+    - /usr/share/empty
+
+- name: Create symlinks and set permissions for vsftpd and start-vsftpd
+  ansible.builtin.file:
+    src: "/tmp/vsftpd-2.3.4/{{ item.src }}"
+    dest: "/usr/local/bin/{{ item.dest }}"
+    state: link
+    mode: '0770'
+    follow: false
+    force: yes
+  loop:
+    - { src: "vsftpd", dest: "vsftpd" }
+    - { src: "start-vsftpd.sh", dest: "start-vsftpd" }
 
 # TODO: Change content!
 - name: Create fake sensitive data
