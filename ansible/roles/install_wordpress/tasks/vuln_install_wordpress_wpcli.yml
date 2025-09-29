@@ -1,0 +1,70 @@
+---
+# Author Masaki
+- name: Download wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/sbin/wp
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Change tagline of the blog 
+  command: wp option update blogdescription 'Troy' --path='/var/www/html/wordpress' --allow-root
+  ignore_errors: true 
+
+- name: Add admin accounts
+  command: >
+    wp user create --allow-root
+    {{ item.username }}
+    {{ item.username }}@{{ wordpress_user_email_domain }}
+    --role=administrator
+    --user_pass={{ item.password }}
+    --path={{ wordpress_path }}
+  loop:
+    - { username: admin, password: admin }
+    - { username: estew, password: MTAwIG1lYXN1cmVzIG9mIG9pbA== }
+
+  register: command_output
+  ignore_errors: true
+
+- name: Add contributer accounts
+  command: >
+    wp user create --allow-root
+    {{ item.username }}
+    {{ item.username }}@{{ wordpress_user_email_domain }}
+    --role=editor
+    --user_pass={{ item.password }}
+    --path={{ wordpress_path }}
+  loop:
+    - { username: user, password: password }
+    - { username: paris, password: love }
+    - { username: bobby, password: shmurda }
+
+
+  ignore_errors: true
+
+- name: Installing and Activating themes 
+  command: >
+    wp theme install oceanwp --activate --path='/var/www/html/wordpress' --allow-root
+  ignore_errors: true 
+
+
+- name: Installing Vulnerable plugins 
+  command: wp plugin install '{{ item.name }}' --version='{{ item.version }}' --activate --path='/var/www/html/wordpress' --allow-root
+  loop:
+    - { name: simple-file-list, version: 4.2.2 }
+    - { name: email-subscribers, version: 4.2.2 }
+  ignore_errors: true 
+
+- name: Copy fake blog post files 
+  ansible.builtin.copy:
+    src: "roles/install-wordpress/files/pages"
+    dest: "/var/www/html/wordpress"
+    mode: '0777'
+    owner: www-data
+    group: www-data
+
+- name: Write fake blog posts 
+  command: wp post create --post_author='{{ item.author }}' --post_status=publish --post_title='{{ item.title }}' '/var/www/{{ item.filename }}' --path='{{ wordpress_path }}' --allow-root
+  loop:
+    - { author: admin, title: "Achilles.Substack", filename: achilles.txt }
+    - { author: admin, title: "Tory Oracle", filename: oracle.txt }
+  ignore_errors: true 

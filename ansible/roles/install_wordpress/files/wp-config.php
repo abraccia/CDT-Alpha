@@ -46,7 +46,8 @@ $table_prefix = 'wp_';
 /**
  * WordPress debugging mode.
  */
-define( 'WP_DEBUG', false );
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', '/var/logs/wordpress_debug_log.txt' );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
