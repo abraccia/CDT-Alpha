@@ -71,12 +71,32 @@
       tags:
         - smtp
 
-    # Check LDAP for Windows
-    - name: Check LDAP for Windows
+    # Check SMB for Windows
+    - name: Check SMB for Windows
       wait_for:
         host: "{{ inventory_hostname }}"
-        port: 389
+        port: 139
         state: started
       when: "'windows' in group_names and service_type == 'samba'"
       tags:
         - samba
+
+    # Check RDP for Windows
+    - name: Check RDP for Windows
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 3389
+        state: started
+      when: "'windows' in group_names and service_type == 'rdp'"
+      tags:
+        - rdp
+    
+    # Check DC for Windows
+    - name: Check DC for Windows
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 389
+        state: started
+      when: "'windows' in group_names and service_type == 'dc'"
+      tags:
+        - dc
