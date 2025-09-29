@@ -71,7 +71,7 @@
     path: /etc/ssh/sshd_config
     marker: "## BEGIN BANNER ##\n# Do not edit between markers\n## END BANNER ##"
     block: |
-      Match User root
+      Match User greyteam
         Banner /etc/ssh_banner
     create: yes
     backup: yes
