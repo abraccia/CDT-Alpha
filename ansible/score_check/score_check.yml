@@ -1,0 +1,82 @@
+---
+- name: Service Check Playbook
+  hosts: all
+  gather_facts: no
+  tasks:
+
+    # Check ICMP (ping)
+    - name: Check ICMP availability
+      ping:
+      register: icmp_check
+      ignore_errors: yes
+      tags:
+        - icmp
+
+    # Check RDP for Windows
+    - name: Check RDP for Windows
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 3389
+        state: started
+      when: "'windows' in group_names and service_type == 'rdp'"
+      tags:
+        - rdp
+
+    # Check SSH for Linux
+    - name: Check SSH for Linux
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22
+        state: started
+      when: "'linux' in group_names and service_type == 'ssh'"
+      tags:
+        - ssh
+
+    # Check MySQL for Linux
+    - name: Check MySQL for Linux
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 3306
+        state: started
+      when: "'linux' in group_names and service_type == 'mysql'"
+      tags:
+        - mysql
+
+    # Check HTTP (WordPress) for Linux
+    - name: Check HTTP (WordPress) for Linux
+      uri:
+        url: "http://{{ inventory_hostname }}:80"
+        status_code: 200
+      when: "'linux' in group_names and service_type == 'wordpress'"
+      tags:
+        - wordpress
+
+    # Check FTP for Linux
+    - name: Check FTP for Linux
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 21
+        state: started
+      when: "'linux' in group_names and service_type == 'ftp'"
+      tags:
+        - ftp
+
+    # Check SMTP for Linux
+    - name: Check SMTP for Linux
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 25
+        state: started
+      when: "'linux' in group_names and service_type == 'smtp'"
+      tags:
+        - smtp
+
+    # Check LDAP for Windows
+    - name: Check LDAP for Windows
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 389
+        state: started
+      when: "'windows' in group_names and service_type == 'samba'"
+      tags:
+        - samba
