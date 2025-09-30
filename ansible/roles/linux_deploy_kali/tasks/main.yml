@@ -1,0 +1,8 @@
+- name: Configure redteam user
+  ansible.builtin.user:
+    name: "redteam"
+    password: "{{ default_password | password_hash('sha512', salt) }}"
+    shell: /bin/zsh
+    create_home: true
+    groups: sudo
+    state: present

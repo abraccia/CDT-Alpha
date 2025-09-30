@@ -9,6 +9,14 @@
     - linux
     - base
 
+- name: Setup red team clients
+  hosts: redteam
+  roles: 
+    - linux_deploy_kali
+  tags:
+    - linux
+    - redteam
+
 - name: Configure SMTP (Linux)
   hosts: smtp
   roles: 
