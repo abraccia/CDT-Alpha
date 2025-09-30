@@ -27,24 +27,34 @@ all:
       hosts:
         kali0:
           ansible_host: 10.2.0.10
+          service_type: kali
         kali1:
           ansible_host: 10.2.0.11
+          service_type: kali
         kali2:
           ansible_host: 10.2.0.12
+          service_type: kali
         kali3:
-            ansible_host: 10.2.0.13
+          ansible_host: 10.2.0.13
+          service_type: kali
         kali4:
           ansible_host: 10.2.0.14
+          service_type: kali
         kali5:
           ansible_host: 10.2.0.15
+          service_type: kali
         kali6:
           ansible_host: 10.2.0.16
+          service_type: kali
         kali7:
           ansible_host: 10.2.0.17
+          service_type: kali
         kali8:
-            ansible_host: 10.2.0.18
+          ansible_host: 10.2.0.18
+          service_type: kali
         kali9:
           ansible_host: 10.2.0.19
+          service_type: kali
     windows:
       hosts:
         rdp:

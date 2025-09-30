@@ -12,11 +12,11 @@
       - screen
     state: present
 
-- name: Download RustDesk
-  get_url:
-    url: https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.deb
-    dest: /tmp/rustdesk.deb
-    mode: '0644'
+- name: Download RustDesk with wget
+  shell: |
+    wget -q https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.deb -O /tmp/rustdesk.deb
+  args:
+    creates: /tmp/rustdesk.deb
 
 - name: Install RustDesk
   apt:
