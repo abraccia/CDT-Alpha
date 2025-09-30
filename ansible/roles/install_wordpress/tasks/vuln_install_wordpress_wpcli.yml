@@ -56,7 +56,7 @@
 
 - name: Copy fake blog post files 
   ansible.builtin.copy:
-    src: "roles/install-wordpress/files/pages"
+    src: "/pages"
     dest: "/var/www/html/wordpress"
     mode: '0777'
     owner: www-data
