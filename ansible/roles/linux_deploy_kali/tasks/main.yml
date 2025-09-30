@@ -6,3 +6,6 @@
     create_home: true
     groups: sudo
     state: present
+
+- name: kali rustdesk setup
+  import_tasks: deploy_rustdesk.yml
