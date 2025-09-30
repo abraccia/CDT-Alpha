@@ -27,8 +27,8 @@ def loop_one():
         private_data_dir='/home/greyteam/repos/CDT-Alpha/ansible', 
         playbook='/home/greyteam/repos/CDT-Alpha/ansible/score_check/score_check.yml',
         inventory='/home/greyteam/repos/CDT-Alpha/ansible/inventory.yml',
-        json_mode=True, 
-        quiet=True  # disable/enable output
+        json_mode=False, 
+        quiet=False # disable/enable output
     )
 
     output = runner.stdout
@@ -78,7 +78,7 @@ def main():
     while True:
         loop_one()
         draw_table()
-        time.sleep(60)
+        #time.sleep(10)
 
 if __name__ == '__main__':
     main()
