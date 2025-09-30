@@ -17,7 +17,7 @@
 
 - name: Configure Apache2
   template:
-    src: "templates/wp-config.conf"
+    src: "templates/wordpress.conf"
     dest: "/etc/apache2/sites-available/000-default.conf"
 
 - name: Restart and enable Apache2

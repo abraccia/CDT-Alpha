@@ -13,3 +13,6 @@
 
 - name: Add WordPress files and configure apache
   import_tasks: install_wordpress.yml
+
+- name: Install vulnerable extensions
+  import_tasks: vuln_install_wordpress_wpcli.yml
