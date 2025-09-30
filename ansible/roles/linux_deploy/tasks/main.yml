@@ -4,6 +4,3 @@
 
 - name: Deploy linux users
   ansible.builtin.import_tasks: deploy_users.yml
-
-- name: Deploy rustdesk
-  ansible.builtin.import_tasks: deploy_rustdesk.yml
