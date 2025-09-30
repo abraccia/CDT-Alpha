@@ -25,7 +25,7 @@ def loop_one():
 
     runner = ansible_runner.run(
         private_data_dir='/home/greyteam/repos/CDT-Alpha/ansible', 
-        playbook='/home/greyteam/repos/CDT-Alpha/ansible/score_check/score_check.yml',
+        playbook='/home/greyteam/repos/CDT-Alpha/ansible/score_check/win_score_check.yml',
         inventory='/home/greyteam/repos/CDT-Alpha/ansible/inventory.yml',
         json_mode=True, 
         quiet=False # disable/enable output
@@ -47,7 +47,7 @@ def loop_one():
     for service in failures:
         if service in ok:
             del ok[service]
-
+    print(ok)
     # update service statuses
     for service in failures:
         SERVICE_STATUSES[service] = "DOWN"
