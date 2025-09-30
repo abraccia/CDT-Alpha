@@ -1,136 +1,129 @@
 ---
-- name: Install and configure RustDesk
-  hosts: all
-  become: yes
-  vars:
-    rustdesk_config: "9JSP4MlQRJmNrgVd1hmM4M1c1JWT30kMOFmWmNTRwsyKxEkNCdjauF1Qrx0UzIiOikXZrJCLiIiOikGchJCLiUHZl5CdpJnLldmbhJnclJWej5yazVGZ0NXdyJiOikXYsVmciwiI1RWZuQXay5SZn5WYyJXZil3Yus2clRGdzVnciojI0N3boJye"
-    
-  tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
 
-    - name: Install required dependencies
-      apt:
-        name:
-          - wget
-          - pwgen
-          - screen
-        state: present
+- name: Install required dependencies
+  apt:
+    name:
+      - wget
+      - pwgen
+      - screen
+    state: present
 
-    - name: Download RustDesk
-      get_url:
-        url: https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.deb
-        dest: /tmp/rustdesk.deb
-        mode: '0644'
+- name: Download RustDesk
+  get_url:
+    url: https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.deb
+    dest: /tmp/rustdesk.deb
+    mode: '0644'
 
-    - name: Install RustDesk
-      apt:
-        deb: /tmp/rustdesk.deb
-        state: present
+- name: Install RustDesk
+  apt:
+    deb: /tmp/rustdesk.deb
+    state: present
 
-    - name: Generate RustDesk password
-      shell: pwgen -1 -A -0 -B
-      register: rustdesk_pw_result
-      changed_when: false
+- name: Generate RustDesk password
+  shell: pwgen -1 -A -0 -B
+  register: rustdesk_pw_result
+  changed_when: false
 
-    - name: Set RustDesk password fact
-      set_fact:
-        rustdesk_pw: "{{ rustdesk_pw_result.stdout }}"
+- name: Set RustDesk password fact
+  set_fact:
+    rustdesk_pw: "{{ rustdesk_pw_result.stdout }}"
 
-    - name: Configure RustDesk password (first run)
-      shell: |
-        /usr/bin/rustdesk --password "{{ rustdesk_pw }}"
-      environment:
-        DISPLAY: ":0"
+- name: Configure RustDesk password (first run)
+  shell: |
+    /usr/bin/rustdesk --password "{{ rustdesk_pw }}"
+  environment:
+    DISPLAY: ":0"
 
-    - name: Configure RustDesk relay (first run)
-      shell: |
-        /usr/bin/rustdesk --config "{{ rustdesk_config }}"
-      environment:
-        DISPLAY: ":0"
+- name: Configure RustDesk relay (first run)
+  shell: |
+    /usr/bin/rustdesk --config "9JSP4MlQRJmNrgVd1hmM4M1c1JWT30kMOFmWmNTRwsyKxEkNCdjauF1Qrx0UzIiOikXZrJCLiIiOikGchJCLiUHZl5CdpJnLldmbhJnclJWej5yazVGZ0NXdyJiOikXYsVmciwiI1RWZuQXay5SZn5WYyJXZil3Yus2clRGdzVnciojI0N3boJye"
+  environment:
+    DISPLAY: ":0"
 
-    - name: Ensure RustDesk service is running
-      systemd:
-        name: rustdesk
-        state: restarted
-        enabled: yes
+- name: Ensure RustDesk service is running
+  systemd:
+    name: rustdesk
+    state: restarted
+    enabled: yes
 
-    - name: Wait for RustDesk to initialize
-      pause:
-        seconds: 15
+- name: Wait for RustDesk to initialize
+  pause:
+    seconds: 15
 
-    - name: Re-configure RustDesk password (second run)
-      shell: |
-        /usr/bin/rustdesk --password "{{ rustdesk_pw }}"
-      environment:
-        DISPLAY: ":0"
+- name: Re-configure RustDesk password (second run)
+  shell: |
+    /usr/bin/rustdesk --password "{{ rustdesk_pw }}"
+  environment:
+    DISPLAY: ":0"
 
-    - name: Re-configure RustDesk relay (second run)
-      shell: |
-        /usr/bin/rustdesk --config "{{ rustdesk_config }}"
-      environment:
-        DISPLAY: ":0"
+- name: Re-configure RustDesk relay (second run)
+  shell: |
+    /usr/bin/rustdesk --config "{{ rustdesk_config }}"
+  environment:
+    DISPLAY: ":0"
 
-    - name: Final password configuration
-      shell: |
-        /usr/bin/rustdesk --password "{{ rustdesk_pw }}"
-      environment:
-        DISPLAY: ":0"
+- name: Final password configuration
+  shell: |
+    /usr/bin/rustdesk --password "{{ rustdesk_pw }}"
+  environment:
+    DISPLAY: ":0"
 
-    - name: Get RustDesk ID
-      shell: /usr/bin/rustdesk --get-id
-      register: rustdesk_id_result
-      changed_when: false
+- name: Get RustDesk ID
+  shell: /usr/bin/rustdesk --get-id
+  register: rustdesk_id_result
+  changed_when: false
 
-    - name: Final service restart
-      systemd:
-        name: rustdesk
-        state: restarted
+- name: Final service restart
+  systemd:
+    name: rustdesk
+    state: restarted
 
-    - name: Display RustDesk credentials
-      debug:
-        msg: "RustDesk ID: {{ rustdesk_id_result.stdout }} -- Password: {{ rustdesk_pw }}"
+- name: Display RustDesk credentials
+  debug:
+    msg: "RustDesk ID: {{ rustdesk_id_result.stdout }} -- Password: {{ rustdesk_pw }}"
 
-    - name: Copy RustDesk reconfiguration script
-      copy:
-        src: files/rust-boot.sh
-        dest: /usr/local/bin/rust-boot.sh
-        mode: '0755'
-        owner: root
-        group: root
+- name: Copy RustDesk reconfiguration script
+  copy:
+    src: files/rust-boot.sh
+    dest: /usr/local/bin/rust-boot.sh
+    mode: '0755'
+    owner: root
+    group: root
 
-    - name: Make rust-boot.sh immutable
-      command: chattr +i /usr/local/bin/rust-boot.sh
-      become: true
-      args:
-        warn: false
+- name: Make rust-boot.sh immutable
+  command: chattr +i /usr/local/bin/rust-boot.sh
+  become: true
+  args:
+    warn: false
 
-    - name: Create systemd service for RustDesk reconfiguration
-      copy:
-        dest: /etc/systemd/system/rustdesk-reconfigure.service
-        content: |
-          [Unit]
-          Description=RustDesk Reconfiguration on Boot
-          After=network-online.target
-          Wants=network-online.target
+- name: Create systemd service for RustDesk reconfiguration
+  copy:
+    dest: /etc/systemd/system/rustdesk-reconfigure.service
+    content: |
+      [Unit]
+      Description=RustDesk Reconfiguration on Boot
+      After=network-online.target
+      Wants=network-online.target
 
-          [Service]
-          Type=oneshot
-          ExecStart=/usr/local/bin/rustboot.sh
-          RemainAfterExit=true
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/rustboot.sh
+      RemainAfterExit=true
 
-          [Install]
-          WantedBy=multi-user.target
-        mode: '0644'
-        owner: root
-        group: root
+      [Install]
+      WantedBy=multi-user.target
+    mode: '0644'
+    owner: root
+    group: root
 
-    - name: Reload systemd to register new service
-      command: systemctl daemon-reload
+- name: Reload systemd to register new service
+  command: systemctl daemon-reload
 
-    - name: Enable RustDesk reconfiguration service
-      systemd:
-        name: rustdesk-reconfigure.service
-        enabled: yes
+- name: Enable RustDesk reconfiguration service
+  systemd:
+    name: rustdesk-reconfigure.service
+    enabled: yes
