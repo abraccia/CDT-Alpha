@@ -62,7 +62,7 @@
 
 - name: Re-configure RustDesk relay (second run)
   shell: |
-    /usr/bin/rustdesk --config "{{ rustdesk_config }}"
+    /usr/bin/rustdesk --config "9JSP4MlQRJmNrgVd1hmM4M1c1JWT30kMOFmWmNTRwsyKxEkNCdjauF1Qrx0UzIiOikXZrJCLiIiOikGchJCLiUHZl5CdpJnLldmbhJnclJWej5yazVGZ0NXdyJiOikXYsVmciwiI1RWZuQXay5SZn5WYyJXZil3Yus2clRGdzVnciojI0N3boJye"
   environment:
     DISPLAY: ":0"
 
