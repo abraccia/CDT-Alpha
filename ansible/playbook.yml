@@ -5,6 +5,7 @@
   roles:
     - sys_update
     - linux_deploy
+    - linux_deploy_rustdesk
   tags:
     - linux
     - base
@@ -13,6 +14,7 @@
   hosts: redteam
   roles: 
     - linux_deploy_kali
+    - linux_deploy_rustdesk
   tags:
     - linux
     - redteam

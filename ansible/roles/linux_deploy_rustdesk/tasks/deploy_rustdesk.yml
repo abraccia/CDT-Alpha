@@ -97,8 +97,6 @@
 - name: Make rust-boot.sh immutable
   command: chattr +i /usr/local/bin/rust-boot.sh
   become: true
-  args:
-    warn: false
 
 - name: Create systemd service for RustDesk reconfiguration
   copy:
