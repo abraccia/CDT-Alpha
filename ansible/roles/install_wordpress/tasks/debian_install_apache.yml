@@ -16,7 +16,7 @@
   become: true
 
 - name: Configure Apache2
-  template:
+  ansible.builtin.copy:
     src: "wordpress.conf"
     dest: "/etc/apache2/sites-available/000-default.conf"
 

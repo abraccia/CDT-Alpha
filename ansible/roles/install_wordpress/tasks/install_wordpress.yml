@@ -35,11 +35,24 @@
     dest: /var/www/html/wordpress/
   become: true
 
+- name: Set ownership
+  file:
+    path: /var/www
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+
 - name: Copy wordpress virtual host file
   ansible.builtin.copy:
     src: wordpress.conf
     dest: /etc/apache2/sites-available/
   become: true
+
+- name: Copy wp-config.php template
+  ansible.builtin.copy: 
+    src: wp-config.php
+    dest: /var/www/wordpress/wp-config.php
 
 # Enable wordpress
 - name: Symlink wordpres.conf to enable
@@ -51,6 +64,21 @@
     group: root
     mode: '644'
   become: true
+
+- name: Complete initial WordPress configuration page
+  uri:
+    follow_redirects: all
+    url: "http://10.1.0.10/wp-admin/install.php?step=2"
+    method: POST
+    body_format: form-urlencoded
+    body:
+     - [ weblog_title, "Trojan War News and Updates" ]
+     - [ user_name, "admin" ]
+     - [ admin_password, "WordPressPasswordNoBruteForce" ]
+     - [ admin_password2, "WordPressPasswordNoBruteForce" ]
+     - [ pw_weak, "on"]
+     - [ admin_email, "admin@10.1.0.10" ]
+     - [ Submit, Install WordPress ]
 
 # Restart Apache to apply Virtual Host configuration changes
 - name: Enable apache
