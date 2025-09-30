@@ -49,11 +49,6 @@
     dest: /etc/apache2/sites-available/
   become: true
 
-- name: Copy wp-config.php template
-  ansible.builtin.copy: 
-    src: wp-config.php
-    dest: /var/www/wordpress/wp-config.php
-
 # Enable wordpress
 - name: Symlink wordpres.conf to enable
   ansible.builtin.file:

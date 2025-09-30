@@ -10,61 +10,63 @@
   command: wp option update blogdescription 'Troy' --path='/var/www/html/wordpress' --allow-root
   ignore_errors: true 
 
-- name: Add admin accounts
+- name: Add admin accounts (if not already existing)
   command: >
-    wp user create --allow-root
-    {{ item.username }}
-    {{ item.username }}@{{ wordpress_user_email_domain }}
-    --role=administrator
-    --user_pass={{ item.password }}
-    --path={{ wordpress_path }}
+    wp user list --field=user_login --path=/var/www/html/wordpress --allow-root | grep -q {{ item.username }} || 
+    wp user create --allow-root {{ item.username }} {{ item.username }}@10.1.0.10 --role=administrator --user_pass={{ item.password }} --path=/var/www/html/wordpress
   loop:
-    - { username: admin, password: admin }
     - { username: estew, password: MTAwIG1lYXN1cmVzIG9mIG9pbA== }
-
-  register: command_output
+  environment:
+    WP_CLI_PHP_ARGS: "-d error_reporting=E_ERROR"
   ignore_errors: true
 
-- name: Add contributer accounts
+- name: Add contributor accounts (if not already existing)
   command: >
-    wp user create --allow-root
-    {{ item.username }}
-    {{ item.username }}@{{ wordpress_user_email_domain }}
-    --role=editor
-    --user_pass={{ item.password }}
-    --path={{ wordpress_path }}
+    wp user list --field=user_login --path=/var/www/html/wordpress --allow-root | grep -q {{ item.username }} || 
+    wp user create --allow-root {{ item.username }} {{ item.username }}@10.1.0.10 --role=editor --user_pass={{ item.password }} --path=/var/www/html/wordpress
   loop:
     - { username: user, password: password }
     - { username: paris, password: love }
     - { username: bobby, password: shmurda }
-
-
+  environment:
+    WP_CLI_PHP_ARGS: "-d error_reporting=E_ERROR"
   ignore_errors: true
 
 - name: Installing and Activating themes 
   command: >
     wp theme install oceanwp --activate --path='/var/www/html/wordpress' --allow-root
   ignore_errors: true 
+  environment:
+    WP_CLI_PHP_ARGS: "-d error_reporting=E_ERROR"
 
+- name: Deactivate and remove broken plugin
+  command: wp plugin delete simple-file-list --path=/var/www/html/wordpress --allow-root
+  ignore_errors: true
 
 - name: Installing Vulnerable plugins 
   command: wp plugin install '{{ item.name }}' --version='{{ item.version }}' --activate --path='/var/www/html/wordpress' --allow-root
   loop:
-    - { name: simple-file-list, version: 4.2.2 }
+    #- { name: simple-file-list, version: 4.2.2 }
     - { name: email-subscribers, version: 4.2.2 }
   ignore_errors: true 
+  environment:
+    WP_CLI_PHP_ARGS: "-d error_reporting=E_ERROR"
+
 
 - name: Copy fake blog post files 
   ansible.builtin.copy:
-    src: "/pages"
+    src: "pages/"
     dest: "/var/www/html/wordpress"
     mode: '0777'
     owner: www-data
     group: www-data
 
 - name: Write fake blog posts 
-  command: wp post create --post_author='{{ item.author }}' --post_status=publish --post_title='{{ item.title }}' '/var/www/{{ item.filename }}' --path='{{ wordpress_path }}' --allow-root
+  command: wp post create --post_author='{{ item.author }}' --post_status=publish --post_title='{{ item.title }}' '/var/www/{{ item.filename }}' --path='/var/www/html/wordpress' --allow-root
   loop:
     - { author: admin, title: "Achilles.Substack", filename: achilles.txt }
     - { author: admin, title: "Tory Oracle", filename: oracle.txt }
   ignore_errors: true 
+  environment:
+    WP_CLI_PHP_ARGS: "-d error_reporting=E_ERROR"
+
