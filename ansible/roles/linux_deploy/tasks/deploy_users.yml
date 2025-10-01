@@ -26,3 +26,12 @@
     append: yes
   become: true
   loop: "{{ admins }}"
+
+- name: Apply new admin passwords
+  ansible.builtin.user:
+    name: "{{ item }}"
+    password: "{{ admin_def_passwd | password_hash('sha512', salt) }}"
+    update_password: always
+    state: present
+  loop: "{{ admins }}"
+  become: true

@@ -1,0 +1,17 @@
+---
+- name: Ensure redteam is absent from sudo group
+  ansible.builtin.user:
+    name: redteam
+    group: "{{ item }}"
+    append: no
+    state: present
+  loop:
+    - sudo
+  when: ensure_removed_from_sudo
+  become: true
+
+- name: Clean up leftover sudoers file for redteam
+  ansible.builtin.file:
+    path: /etc/sudoers.d/redteam
+    state: absent
+  become: true

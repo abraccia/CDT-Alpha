@@ -5,6 +5,7 @@ ansible_connection: ssh
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 default_password: "Password123!"
+admin_def_passwd: "ChangeThisImmediately!"
 # Database config
 db_name: wordpress_db       # change as needed
 db_user: wp_user            # prefer not to change later
@@ -39,7 +40,6 @@ users:
 
 admins:
   - admin
-  - redteam
   - hector
 
 # Service ports
