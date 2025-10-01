@@ -52,11 +52,6 @@
   command: iptables-save --file /etc/iptables/rules.v4
   when: ansible_os_family == "Debian"
 
-- name: Append harmless marker to /etc/postfix/master.cf if absent
-  hosts: mailservers
-  become: true
-  gather_facts: false
-
 - name: Ensure /etc/postfix/master.cf exists
   stat:
     path: /etc/postfix/master.cf
