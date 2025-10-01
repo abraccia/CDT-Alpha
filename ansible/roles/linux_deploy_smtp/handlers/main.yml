@@ -1,0 +1,15 @@
+---
+# AUTHOR: Masaki
+- name: validate postfix
+  become: true
+  command: postfix check
+  register: postfix_check
+  failed_when: postfix_check.rc != 0
+  changed_when: false
+
+- name: reload postfix
+  become: true
+  systemd:
+    name: postfix
+    state: reloaded
+  when: postfix_check.rc == 0

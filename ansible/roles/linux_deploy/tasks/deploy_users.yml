@@ -19,6 +19,20 @@
   loop: "{{ users }}"
   become: true
 
+- name: Check if user 'ubuntu' exists
+  ansible.builtin.getent:
+    database: passwd
+    key: ubuntu
+  register: ubuntu_exists
+  failed_when: false
+
+- name: Remove user 'ubuntu' if they exist
+  ansible.builtin.user:
+    name: ubuntu
+    state: absent
+    remove: yes
+  when: ubuntu_exists.entries | length > 0
+
 - name: Ensure admin user is in sudo group
   user:
     name: "{{ item }}"
@@ -35,3 +49,34 @@
     state: present
   loop: "{{ admins }}"
   become: true
+
+- name: Generate a random numeric suffix for the flag
+  set_fact:
+    flag_random: "{{ lookup('password', '/dev/null length=3') }}"
+  no_log: false
+
+- name: Assemble flag content
+  set_fact:
+    flag_content: "TROY{GREATEST_WARRIOR_OF_TROY_{{ flag_random }}}"
+
+- name: Create hidden .flag.txt in hector's home
+  ansible.builtin.copy:
+    dest: /home/hector/.flag.txt
+    content: "{{ flag_content }}\n"
+    owner: hector
+    group: hector
+    mode: '0600'
+    force: false
+  become: true
+  register: flag_write
+
+- name: Make flag immutable
+  command: chattr +i /home/hector/.flag.txt
+  become: true
+
+- name: Show created file path and content (debug)
+  ansible.builtin.debug:
+    msg:
+      - "wrote: /home/hector/.flag.txt"
+      - "content: {{ flag_content }}"
+  when: flag_write is changed

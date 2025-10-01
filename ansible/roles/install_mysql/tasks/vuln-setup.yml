@@ -1,0 +1,57 @@
+# AUTHOR: Masaki
+- name: Create a vulnerable MySQL user with weak credentials
+  community.mysql.mysql_user:
+    name: "estew"
+    host: "%"
+    password: "password123"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+  become: true
+
+- name: Create a second vulnerable user (sql_user)
+  community.mysql.mysql_user:
+    name: "sql_user"
+    host: "%"
+    password: "anthonycp"
+    priv: "*.*:FILE"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+  become: true
+
+- name: Disable secure_file_priv restriction
+  community.mysql.mysql_variables:
+    variable: "secure_file_priv"
+    value: ""
+    login_unix_socket: /run/mysqld/mysqld.sock
+  become: true
+
+- name: Ensure world-writable directory for OUTFILE data
+  ansible.builtin.file:
+    path: /tmp/mysql_out
+    state: directory
+    mode: '0777'
+    owner: mysql
+    group: mysql
+  become: true
+
+- name: Create hidden .flag.txt in mysql directory
+  ansible.builtin.copy:
+    dest: /etc/mysql/.flag.txt
+    content: "TROY{Hey_egoraptor,_what's_a_UDF?}\n"
+    owner: root
+    group: root
+    mode: '0600'
+    force: false
+  become: true
+
+
+- name: Insert flags into the database
+  community.mysql.mysql_query:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    query:
+      - "INSERT INTO `wp_posts` (`post_author`,`post_date`,`post_date_gmt`,`post_content`,`post_title`,`post_excerpt`,`post_status`,`comment_status`,`ping_status`,`post_name`,`post_modified`,`post_modified_gmt`,`post_content_filtered`,`post_parent`,`guid`,`menu_order`,`post_type`,`post_mime_type`,`comment_count`) VALUES (1,'2025-10-01 12:00:00','2025-10-01 12:00:00','<p>TROY{ggrks}</p>','FLAG','TROY{...','publish','open','open','flag','2025-10-01 12:00:00','2025-10-01 12:00:00','',0,'',0,'post','',0);"
+      - "SET @new_post_id = LAST_INSERT_ID();"
+      - "UPDATE `wp_posts`""
+      - "INSERT INTO mysql.user (User, Password) VALUES ('flag_user', 'TROY{Who_was_in_Paris?}');"
+  become: true
+  when: false # This ensures it doesn't run by default; run manually when needed

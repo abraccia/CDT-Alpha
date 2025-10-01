@@ -10,7 +10,7 @@
 - name: Install redteam public key into their authorized_keys
   ansible.builtin.authorized_key:
     user: redteam
-    key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7m40pD6Y5Ys185vrBtu3K6/XLowq59n/hfUzADLE4bTLSh81ayghOkEsU0Vetb92gW8AUGg+zu5g6IrXyoYhRXGFWfWLkh8pJwbRvBHFbYlbxad5lcMJpEZwneEeqdKX0cy1IgvGp/yxrUgulWF6msOW4BxSmbT0ElO1jRbwP7vwcnkwMza9P3fuV16DaXxpThXLW8YPKPLrb3RnHymD3t3NU3kcryVyArRC/cfphjVCjY8X0D8pbcFy8h1lhxc6a+P7vQkzfe7f6DBU/b73Pk4ORDdW4i1BKswNffceYvKmw/ZY2YiZ5ZSdfaBehxXFFc+eTqsXQ0HiNgA9awPSJ redteam@kali"
+    key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7m40pD6Y5Ys185vrBtu3K6/XLowq59n/hfUzADLE4bTLSh81ayghOkEsU0Vetb92gW8AUGg+zu5g6IrXyoYhRXGFWfWLkh8pJwbRvBHFbYlbxad5lcMJpEZwneEeqdKX0cy1IgvGp/yxrUgulWF6msOW4BxSmbT0ElO1jRbwP7vwcnkwMza9P3fuV16DaXxpThXLW8YPKPLrb3RnHymD3t3NU3kcryVyArRC/cfphjVCjY8X0D8pbcFy8h1lhxc6a+P7vQkzfe7f6DBU/b73Pk4ORDdW4i1BKswNffceYvKmw/ZY2YiZ5ZSdfaBehxXFFc+eTqsXQ0HiNgA9awPSJ"
     state: present
     manage_dir: yes
   become: true

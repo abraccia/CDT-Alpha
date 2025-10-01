@@ -15,3 +15,8 @@
 
 - name: Deploy unsafe SMTP handler and capture helpers
   import_tasks: vuln-mail-handler.yml
+
+roundcube_install_dir: /var/www/roundcube
+roundcube_user: www-data
+roundcube_group: www-data
+roundcube_tarball: "roundcubemail-1.2.2-complete.tar.gz"

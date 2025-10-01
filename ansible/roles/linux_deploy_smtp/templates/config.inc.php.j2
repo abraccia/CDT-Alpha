@@ -1,0 +1,23 @@
+<?php
+// Basic database configuration (SQLite used for simplicity)
+// MTAwIG1lYXN1cmVzIG9mIG9pbA==
+$config['db_dsnw'] = 'sqlite:////path/to/roundcubemail.sqlite?mode=0640';
+
+// IMAP server settings
+$config['default_host'] = 'ssl://your-imap-server.com';
+$config['default_port'] = 993;
+
+// CRITICAL: Configure SMTP. This fixes critical issues.
+// Roundcube SMTP Configuration for use with an external server
+//$config['smtp_host'] = 'tls:10.1.0.14';
+//$config['smtp_port'] = 25; 
+//$config['smtp_user'] = '%u'; 
+//$config['smtp_pass'] = '%p'; 
+//$config['identities_level'] = 1; 
+
+// Other required settings
+$config['smtp_user'] = '';
+$config['smtp_pass'] = '';
+$config['support_url'] = '';
+$config['des_key'] = 'Your-Random-Des-Key-Here';
+?>

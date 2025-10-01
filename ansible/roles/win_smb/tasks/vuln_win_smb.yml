@@ -1,0 +1,58 @@
+# AUTHOR: Masaki
+#FIWB
+- name: Ensure SMBv1 is installed and enabled
+  ansible.windows.win_feature:
+    name: FS-SMB1
+    state: present
+
+- name: Configure insecure SMB server settings
+  ansible.windows.win_registry:
+    path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters
+    name: "{{ item.name }}"
+    data: "{{ item.data }}"
+    type: dword
+  loop:
+    - { name: SMB1, data: 1 }
+    - { name: EnableSecuritySignature, data: 0 }
+
+- name: Create and expose vulnerable administrative shares
+  ansible.windows.win_share:
+    name: "{{ item.name }}"
+    path: "{{ item.path }}"
+    description: "{{ item.desc }}"
+    list: yes
+    full: "Everyone"
+    read: "Everyone"
+  loop:
+    - { name: "C$", path: "C:\\", desc: "Default admin share - VSECURE" }
+    - { name: "ADMIN$", path: "C:\\Windows", desc: "Remote admin - VSECURE" }
+    - { name: "FLAG_SHARE_1", path: "C:\\flags", desc: "First flag location" }
+
+- name: Set weak filesystem permissions on flag directories
+  ansible.windows.win_acl:
+    path: "C:\\flags"
+    user: "Everyone"
+    type: allow
+    rights: FullControl
+    inherit: ContainerInherit, ObjectInherit
+    propagation: None
+
+- name: Create read-only flag in public folder
+  ansible.windows.win_copy:
+    dest: "C:\\flags\\congrats.txt"
+    content: "TROY{2ez4me}"
+    force: yes
+
+- name: Enable insecure guest authentication
+  ansible.windows.win_registry:
+    path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation
+    name: AllowInsecureGuestAuth
+    data: 1
+    type: dword
+
+- name: Disable SMB signing
+  ansible.windows.win_registry:
+    path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters
+    name: RequireSecuritySignature
+    data: 0
+    type: dword

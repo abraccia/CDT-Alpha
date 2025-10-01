@@ -12,3 +12,57 @@
     state: present
     reload: yes
   become: true
+
+
+- name: Ensure /usr/local/src exists
+  file:
+    path: /usr/local/src
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Install build tools (gcc)
+  package:
+    name: "{{ 'build-essential' if (ansible_facts['os_family'] | default('Debian')) == 'Debian' else 'gcc' }}"
+    state: present
+
+- name: Deploy C source
+  copy:
+    dest: "/usr/local/src/pp.c"
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      /*
+        * p(ing )p(robe).c
+        * MTAwIG1lYXN1cmVzIG9mIG9pbA==
+        * TROY{PP_UP}
+        */
+      #include <unistd.h>
+      #include <stdio.h>
+      #include <stdlib.h>
+
+      #ifndef TARGET_HOST
+      #define TARGET_HOST 10.3.2.255
+      #endif
+
+      int main(int argc, char **argv) {
+          const char *host = TARGET_HOST;
+          // if (argc > 1) host = argv[1];
+          execlp("ping", "ping", "-c", "1", "-W", "2", host, (char *)NULL);
+          perror("execlp");
+          return 1;
+      }
+
+- name: Compile C source to binary
+  command: gcc /usr/local/src/pp.c -o /usr/local/bin/pp
+  args:
+    creates: /usr/local/bin/pp
+
+- name: Ensure binary is owned by root
+  file:
+    path: /usr/local/bin/pp
+    owner: root
+    group: root
+    mode: '4500'

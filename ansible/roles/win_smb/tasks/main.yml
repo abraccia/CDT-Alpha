@@ -9,5 +9,8 @@
     reboot_timeout: 600
   when: hostname_change_result.reboot_required
 
-- name: Deploy SMB windows
-  ansible.builtin.import_tasks: win_smb.yml
+- name: Deploy VULNERABLE SMB configuration
+  ansible.builtin.import_tasks: vuln_win_smb.yml
+
+# - name: Deploy SMB windows
+#   ansible.builtin.import_tasks: win_smb.yml

@@ -16,7 +16,7 @@ def main():
     except Exception:
         raw_to = 'unknown'
     filename = raw_to.replace('@', '_at_').strip()
-    outdir = '/var/vuln_mailstore'
+    outdir = '/var/v_mailstore'
     os.makedirs(outdir, exist_ok=True)
     path = os.path.join(outdir, filename)\
     with open(path, 'ab') as f:

@@ -166,7 +166,7 @@
     - { filename: "user-creds.csv", content: "username,password,email\nadministrator,Password123!,Administrator@troy.cdtalpha.com\nestew,MTAwIG1lYXN1cmVzIG9mIG9pbA==,estew@troy.cdtalpha.com" }
     - { filename: "network-diagram.pdf", content: "FAKE NETWORK DIAGRAM - HAHA" }
     - { filename: ".ssh-key-ovid", content: "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn\nNhAAAAAwEAAQAAAIEAoJoKFRjtIu8mNkrtvjw+Op7fberpeMJoj9ihBaQ0kwJCfU5wXOYb\nuL9JzzsNjAsFL2wjBzAsNGRgoKF47GIXtTyEmjUlhcH55CqjNPNJ15gSfoncYtbwpijg5F\njUdWOfHakyDKa13J6HES7SDy/dYk+SJQVBAeqJloan21RjyC0AAAIAgZOpe4GTqXsAAAAH\nc3NoLXJzYQAAAIEAoJoKFRjtIu8mNkrtvjw+Op7fberpeMJoj9ihBaQ0kwJCfU5wXOYbuL\n9JzzsNjAsFL2wjBzAsNGRgoKF47GIXtTyEmjUlhcH55CqjNPNJ15gSfoncYtbwpijg5FjU\ndWOfHakyDKa13J6HES7SDy/dYk+SJQVBAeqJloan21RjyC0AAAADAQABAAAAgDc0vEKETv\n+zNW90UkUScFG2Sxd9qMPaEBdiX/eQeoIORMzOKdHFR8I5/yU9J2r8XsvuYBwYcxmPZ6fP\n2cFn9r3Kl9NJsVueTw5ZTVbyZhpabTi+EMW4tfgtQt1ZqgX+xcHz206FnC1AYLyKMQCbII\n7RsnQ8SFCEWV8vpvLLggABAAAAQHIKOs4BP4fKesn4zgBuruqOa3WXCWpRRNqzJNaafSIo\nSiwzmox1yKE1NK5IV0wpgTyOIvfRm0wEgOxMi7VaFlUAAABBANEms7w4r+2Abf4IQM5rPk\nX7dsgPPpLfMJUHZaSOzLaJYcI+Z6SsKNFjgrSVlj2KhqcGnSmzXEwSlmHnZXusZEUAAABB\nAMSTYQAlI3haaJ/tUIK4osTpuLg9GT/A51vn63iNTJN/LigS4+gZH9cpaOYVE7fD1f8Tdp\nlpI0sUajkLtIvAtskAAAAIb3ZpZEBzc2gBAgM=\n-----END OPENSSH PRIVATE KEY-----"}
-
+    - { filename: "../flag.txt", content: "TROY{Traverse_deez_bozo}"}
 - name: Create weak local users
   user:
     name: "{{ item.username }}"
