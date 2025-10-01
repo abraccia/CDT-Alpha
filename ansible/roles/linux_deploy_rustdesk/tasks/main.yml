@@ -86,6 +86,22 @@
   debug:
     msg: "RustDesk ID: {{ rustdesk_id_result.stdout }} -- Password: {{ rustdesk_pw }}"
 
+- name: Capture remote timestamp
+  ansible.builtin.command:
+    cmd: date --iso-8601=seconds
+  register: remote_date
+  changed_when: false
+  become: true
+
+- name: Append RustDesk ID and password to log
+  ansible.builtin.lineinfile:
+    path: /var/log/rustdesk-id.log
+    create: yes
+    insertafter: EOF
+    line: "{{ remote_date.stdout }}: RustDesk ID: {{ rustdesk_id }} -- Password: {{ rustdesk_pw }}"
+    state: present
+  become: true
+
 - name: Copy RustDesk reconfiguration script
   copy:
     src: files/rust-boot.sh
