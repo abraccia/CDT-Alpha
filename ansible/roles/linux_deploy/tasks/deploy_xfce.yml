@@ -20,6 +20,15 @@
     vtype: select
   become: true
 
+- name: Ensure /etc/X11/default-display-manager points to lightdm
+  ansible.builtin.copy:
+    content: "/usr/sbin/lightdm\n"
+    dest: /etc/X11/default-display-manager
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
 - name: Enable LightDM service
   ansible.builtin.systemd:
     name: lightdm
