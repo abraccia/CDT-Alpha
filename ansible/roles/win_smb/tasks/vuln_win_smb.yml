@@ -51,7 +51,7 @@
     type: dword
 
 - name: Disable SMB signing
-  ansible.windows.win_registry:
+  ansible.windows.win_regedit:
     path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters
     name: RequireSecuritySignature
     data: 0
