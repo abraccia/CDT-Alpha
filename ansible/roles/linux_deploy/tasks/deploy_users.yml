@@ -26,12 +26,12 @@
   register: ubuntu_exists
   failed_when: false
 
-- name: Remove user 'ubuntu' if they exist
-  ansible.builtin.user:
-    name: ubuntu
-    state: absent
-    remove: yes
-  when: ubuntu_exists.entries | length > 0
+# - name: Remove user 'ubuntu' if they exist
+#   ansible.builtin.user:
+#     name: ubuntu
+#     state: absent
+#     remove: yes
+#   when: "'ubuntu' in ubuntu_exists.ansible_facts.getent_passwd"
 
 - name: Ensure admin user is in sudo group
   user:

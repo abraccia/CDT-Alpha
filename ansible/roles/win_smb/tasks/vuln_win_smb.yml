@@ -15,18 +15,18 @@
     - { name: SMB1, data: 1 }
     - { name: EnableSecuritySignature, data: 0 }
 
-- name: Create and expose vulnerable administrative shares
-  ansible.windows.win_share:
-    name: "{{ item.name }}"
-    path: "{{ item.path }}"
-    description: "{{ item.desc }}"
-    list: yes
-    full: "Everyone"
-    read: "Everyone"
-  loop:
-    - { name: "C$", path: "C:\\", desc: "Default admin share - VSECURE" }
-    - { name: "ADMIN$", path: "C:\\Windows", desc: "Remote admin - VSECURE" }
-    - { name: "FLAG_SHARE_1", path: "C:\\flags", desc: "First flag location" }
+- name: Ensure AutoShareServer is enabled
+  ansible.windows.win_regedit:
+    path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters
+    name: AutoShareServer
+    data: 1
+    type: dword
+
+- name: Ensure flags directory exists
+  ansible.windows.win_file:
+    path: "C:\\flags"
+    state: directory
+    recurse: yes
 
 - name: Set weak filesystem permissions on flag directories
   ansible.windows.win_acl:
@@ -42,6 +42,36 @@
     dest: "C:\\flags\\congrats.txt"
     content: "TROY{2ez4me}"
     force: yes
+
+- name: Create and expose vulnerable share for flags
+  ansible.windows.win_share:
+    name: "FLAG_SHARE_1"
+    path: "C:\\flags"
+    description: "First flag location"
+    list: yes
+    full: "Everyone"
+    read: "Everyone"
+
+- name: Ensure C:\temp exists
+  ansible.windows.win_file:
+    path: C:\temp
+    state: directory
+
+- name: Copy script to remote
+  ansible.windows.win_copy:
+    content: |
+      Grant-SmbShareAccess -Name "C$" -AccountName "Everyone" -AccessRight Full -Force; $acl = Get-Acl "C:\"; $acl.SetAccessRule((New-Object System.Security.AccessControl.FileSystemAccessRule("Everyone","FullControl","ContainerInherit,ObjectInherit","None","Allow"))); Set-Acl "C:\" $acl
+    dest: C:\temp\thankForrest.ps1
+
+- name: Execute script
+  ansible.windows.win_shell: >
+    powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File C:\temp\thankForrest.ps1
+  register: run_result
+
+- name: Fail on non-zero return
+  ansible.builtin.fail:
+    msg: "PowerShell failed: {{ run_result.stderr }} / rc={{ run_result.rc }} / stdout={{ run_result.stdout_lines | join('\n') }}"
+  when: run_result.rc != 0
 
 - name: Enable insecure guest authentication
   ansible.windows.win_regedit:
