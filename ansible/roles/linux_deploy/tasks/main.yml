@@ -8,5 +8,5 @@
 - name: Desktop Environment
   ansible.builtin.import_tasks: deploy_xfce.yml
 
-- name: cleanup redteam
-  ansible.builtin.import_tasks: cleanup_red.yml
+# - name: cleanup redteam
+#   ansible.builtin.import_tasks: cleanup_red.yml
