@@ -5,7 +5,7 @@ linux_deploy_standard_folders:
   - /etc/custom_configs
   - /home/shared_data
 
-linux_deploy_user_password: "{{ 'Password123!' | password_hash('sha512') }}" # Example, change this
+#linux_deploy_user_password: "{{ 'Password123!' | password_hash('sha512') }}" # Example, change this
 linux_deploy_user_list:
   - admin
   - redteam
