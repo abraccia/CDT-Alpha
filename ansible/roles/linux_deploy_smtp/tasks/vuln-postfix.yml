@@ -79,7 +79,7 @@
     insertafter: EOF
     line: "# flags=Rq user=admin argv=TROY{INSERT_RSHELL_HERE}-f ${sender} -- ${recipient}"
     state: present
-    regexp: '^#\s*TROY\{FLAG_PLACEHOLDER'
+    regexp: '^#\s*TROY\{INSERT'
     backup: yes
   become: true
   notify:
