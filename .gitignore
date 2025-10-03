@@ -1,2 +1,8 @@
 ansible/deployssh*
 ansible/artifacts*
+.ansible
+.vscode
+terraform/.terraform*
+terraform/terraform.*
+terraform/.app_cred*
+.ssl
