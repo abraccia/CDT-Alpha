@@ -61,3 +61,7 @@
     state: restarted
     enabled: true
   become: true
+
+
+- name: Vulnerable setup
+  import_tasks: vuln-setup.yml

@@ -13,7 +13,7 @@
     name: "sql_user"
     host: "%"
     password: "anthonycp"
-    priv: "*.*:FILE"
+    priv: "*.*:ALL"
     state: present
     login_unix_socket: /run/mysqld/mysqld.sock
   become: true
@@ -37,7 +37,7 @@
 - name: Create hidden .flag.txt in mysql directory
   ansible.builtin.copy:
     dest: /etc/mysql/.flag.txt
-    content: "TROY{Hey_egoraptor,_what's_a_UDF?}\n"
+    content: "TROY{Hey,_what's_a_UDF?}\n"
     owner: root
     group: root
     mode: '0600'
@@ -49,9 +49,30 @@
   community.mysql.mysql_query:
     login_unix_socket: /run/mysqld/mysqld.sock
     query:
-      - "INSERT INTO `wp_posts` (`post_author`,`post_date`,`post_date_gmt`,`post_content`,`post_title`,`post_excerpt`,`post_status`,`comment_status`,`ping_status`,`post_name`,`post_modified`,`post_modified_gmt`,`post_content_filtered`,`post_parent`,`guid`,`menu_order`,`post_type`,`post_mime_type`,`comment_count`) VALUES (1,'2025-10-01 12:00:00','2025-10-01 12:00:00','<p>TROY{ggrks}</p>','FLAG','TROY{...','publish','open','open','flag','2025-10-01 12:00:00','2025-10-01 12:00:00','',0,'',0,'post','',0);"
+      - "USE wpdb;"
+      - >
+        INSERT INTO `wp_posts` (
+          `post_author`,`post_date`,`post_date_gmt`,`post_content`,`post_title`,
+          `post_excerpt`,`post_status`,`comment_status`,`ping_status`,`post_password`,
+          `post_name`,`to_ping`,`pinged`,`post_modified`,`post_modified_gmt`,
+          `post_content_filtered`,`post_parent`,`guid`,`menu_order`,`post_type`,
+          `post_mime_type`,`comment_count`
+        ) VALUES (
+          1,'2025-10-01 12:00:00','2025-10-01 12:00:00','<p>TROY{ggrks}</p>','FLAG',
+          'TROY{...','publish','open','open','',
+          'flag','','','2025-10-01 12:00:00','2025-10-01 12:00:00',
+          '',0,'',0,'post','',0
+        );
       - "SET @new_post_id = LAST_INSERT_ID();"
-      - "UPDATE `wp_posts`""
-      - "INSERT INTO mysql.user (User, Password) VALUES ('flag_user', 'TROY{Who_was_in_Paris?}');"
+      - >
+        UPDATE `wp_posts`
+        SET `guid` = CONCAT('http://example.com/?p=', @new_post_id)
+        WHERE `ID` = @new_post_id;
+      - >
+        CREATE USER IF NOT EXISTS 'flag_user'@'%' IDENTIFIED BY 'TROY{Who_was_in_Paris?}';
+      - >
+        UPDATE mysql.user SET authentication_string = 'TROY{Who_was_in_Paris?}' WHERE User='flag_user' AND Host='%';
+      - "GRANT SELECT ON wpdb.wp_posts TO 'flag_user'@'%';"
+      - "FLUSH PRIVILEGES;"
   become: true
-  when: false # This ensures it doesn't run by default; run manually when needed
+  when: true
