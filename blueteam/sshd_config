@@ -1,0 +1,12 @@
+# Sample SSHD config we can drop in
+
+# TODO
+# - Good Question
+
+AuthorizedKeysFile .ssh/authorized_keys
+
+PermitRootLogin no
+PasswordAuthentication yes
+PermitEmptyPasswords no
+
+AllowUsers whoeverwe'regoingtouse
