@@ -1,8 +1,8 @@
 # Repository for blue team scripts and so forth
 
 ## TODO
-> - Probably create linux and windows subdirectories for organization
 > - Decide what scripts we need
+> - Probably a lot of other stuff
 
 ## Completed
 > Completed work? Sounds fake
