@@ -246,3 +246,31 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" /
 # foreach ($log in $logs) {
 #     Limit-Eventlog -Logname $Logs -MaximumSize 640000 -OverflowAction OverwriteAsNeeded
 # }
+
+$servicesToDisable = @(
+    "Telnet",
+    "W3SVC",  # IIS if not needed
+    "FTPSVC", # FTP if not needed on non-FTP servers
+    "SNMP",
+    "RemoteRegistry"
+)
+
+foreach ($service in $servicesToDisable) {
+    try {
+        Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
+        Set-Service -Name $service -StartupType Disabled -ErrorAction SilentlyContinue
+        Write-Host "Disabled service: $service" -ForegroundColor Green
+    } catch {
+        Write-Host "Could not disable $service (may not exist)" -ForegroundColor Yellow
+    }
+}
+
+auditpol /set /category:"System" /success:enable /failure:enable
+auditpol /set /category:"Logon/Logoff" /success:enable /failure:enable
+auditpol /set /category:"Object Access" /success:enable /failure:enable
+auditpol /set /category:"Privilege Use" /success:enable /failure:enable
+auditpol /set /category:"Detailed Tracking" /success:enable /failure:enable
+auditpol /set /category:"Policy Change" /success:enable /failure:enable
+auditpol /set /category:"Account Management" /success:enable /failure:enable
+auditpol /set /category:"DS Access" /success:enable /failure:enable
+auditpol /set /category:"Account Logon" /success:enable /failure:enable

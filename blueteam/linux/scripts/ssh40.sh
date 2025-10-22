@@ -1,7 +1,12 @@
 #!/bin/bash
 
+if [[ -z "$SUDO_USER" ]]; then
+  echo "This script must be run with sudo"
+  exit
+fi
+
 # Backup the sshd_config file
-sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup.$(date +%Y%m%d)
 
 # Define the lines to search for and insert in the file
 lines_to_insert=(
@@ -11,12 +16,14 @@ lines_to_insert=(
     "GSSAPIAuthentication no"
     "X11Forwarding no"
     "MaxAuthTries 2"
+    "ClientAliveInterval 300"
+    "ClientAliveCountMax 2"
     "LoginGraceTime 20"
     "PermitUserEnvironment no"
     "AllowAgentForwarding no"
     "AllowTcpForwarding no"
     "PermitTunnel no"
-    "MaxSessions 2"
+    "MaxSessions 3"
     "Compression no"
     "TCPKeepAlive no"
     "UseDNS no"
@@ -24,7 +31,8 @@ lines_to_insert=(
     "MaxAuthTries 2"
     "MaxSessions 1"
     "PubkeyAuthentication yes"
-    "PasswordAuthentication no"
+    "PasswordAuthentication yes"
+    "AllowUsers blueteam john.hammond henry.wu robert.muldoon john.arnold"
 )
 
 # Replace or add the specified lines in the sshd_config file
