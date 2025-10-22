@@ -99,6 +99,13 @@ EOF
 systemctl enable auditd
 systemctl restart auditd
 
+if ! command -v fail2ban &>/dev/null; then
+    echo "[+] fail2ban not found. Installing..."
+    apt-get install fail2ban -y
+else
+    echo "[+] fail2ban is already installed."
+fi
+
 # Configure fail2ban
 echo "[+] Configuring fail2ban..."
 cat > /etc/fail2ban/jail.local << 'EOF'
@@ -113,13 +120,6 @@ port = ssh
 logpath = /var/log/auth.log
 maxretry = 3
 EOF
-
-if ! command -v fail2ban &>/dev/null; then
-    echo "[+] fail2ban not found. Installing..."
-    apt-get install fail2ban -y
-else
-    echo "[+] fail2ban is already installed."
-fi
 
 systemctl enable fail2ban
 systemctl restart fail2ban

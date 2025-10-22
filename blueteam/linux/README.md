@@ -260,7 +260,7 @@ sudo tee /etc/audit/rules.d/ftp.rules > /dev/null <<EOF
 EOF
 sudo augenrules --load
 #search logs
-ausearch -k ftp_scoring
+ausearch -k ftp_check
 ```
 rsyslog `/etc/rsyslog.d/90-remote.conf`
 ```conf
