@@ -72,7 +72,7 @@ case "$HOST_IP" in
     ufw allow 22/tcp comment "SSH"
     ;;
   *)
-    echo "[!] Unknown IP, applying minimal rules" | tee -a "$LOG_DIR/hardening.log"
+    echo "[!] Unknown IP, applying minimal rules"
     ufw allow 22/tcp comment "SSH"
     ;;
 esac
