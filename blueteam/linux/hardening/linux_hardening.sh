@@ -64,5 +64,9 @@ EOF
 systemctl enable --now nftables >/dev/null
 nft -f /etc/nftables.conf
 
+# clear legacy rules (optional)
+iptables -F 2>/dev/null || true
+ip6tables -F 2>/dev/null || true
+
 echo "[BRAVO] Firewall active — only scored ports and RustDesk 21114–21119 open inbound."
 echo "Check with: nft list ruleset"
