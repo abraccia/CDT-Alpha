@@ -15,6 +15,10 @@ apt-get purge -y telnet rsh-client rsh-redone-client
 
 # Secure SSH script
 echo "[+] Configuring SSH..."
+if ! systemctl list-unit-files | grep -q '^ssh\.service'; then
+    echo "[!] SSH service not found. Installing..."
+    apt-get install ssh -y
+fi
 ./ssh40.sh
 
 # Configure firewall

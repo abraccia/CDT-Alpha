@@ -1,23 +1,19 @@
 #!/bin/bash
 
 set -euo pipefail
+trap 'echo "[!] ERROR: Script failed at line $LINENO with exit code $?." >&2' ERR
 
 echo "[+] Creating backup users for competition..."
 
 # backup users, give less or more idrc
 BACKUP_USERS=("maria" "jason" "olivia" "alex" "sophia")
 
-# password generator
-generate_password() {
-    tr -dc 'A-Za-z0-9!@#$%^&*' < /dev/urandom | head -c 16
-}
-
 # Create backup users
 for user in "${BACKUP_USERS[@]}"; do
     if id "$user" &>/dev/null; then
         echo "[!] User $user already exists, skipping..."
     else
-        password=$(generate_password)
+        password=$(head -c 256 /dev/urandom | tr -dc A-Za-z0-9 | head -c 31)
         useradd -m -s /bin/bash -G sudo "$user"
         echo "$user:$password" | chpasswd
         echo "[+] Created user: $user with password: $password"
