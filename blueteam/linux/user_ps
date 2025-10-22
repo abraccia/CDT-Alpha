@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cat /etc/passwd | awk -F ':' '/1[0-9]{3}/{print $1}'
+ps -aux
