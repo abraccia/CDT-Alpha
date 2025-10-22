@@ -13,9 +13,9 @@
 
 ## User Management
 
-[backup_user.sh](user_management/backup_user.sh) creates five users that have randomly generated passwords. These are saved at "/root/backup_users_credentials.txt". Be sure to delete, move, or edit this file after running!
+[backup_user.sh](user_management/backup_user.sh) creates five users that have randomly generated passwords. These are saved at `/root/backup_users_credentials.txt`. Be sure to delete, move, or edit this file after running!
 
-[changepasswords.sh](user_management/changepasswords.sh) changes all the passwords randomly. The creds are saved in whatever file the `setup.sh` file was ran probably.
+[changepasswords.sh](user_management/changepasswords.sh) changes all the passwords randomly. The creds are saved in `/root/userlist.txt`
 
 [lock.sh](user_management/lock.sh) locks the accounts that arent whitelisted. Be sure you know what you are doing and who you are locking out! if you accidentally lock out a service account or a scoring account, know why it happened!
 
