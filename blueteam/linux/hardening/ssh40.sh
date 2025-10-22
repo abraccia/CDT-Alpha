@@ -32,7 +32,7 @@ lines_to_insert=(
     "MaxSessions 1"
     "PubkeyAuthentication yes"
     "PasswordAuthentication yes"
-    "AllowUsers blueteam john.hammond henry.wu robert.muldoon john.arnold"
+    "AllowUsers blueteam john.hammond henry.wu robert.muldoon john.arnold greyteam ansible greyteam2"
 )
 
 # Replace or add the specified lines in the sshd_config file

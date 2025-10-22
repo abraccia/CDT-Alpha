@@ -80,6 +80,7 @@ cd linux/hardening
 
 echo "[+] Setting up user management..."
 cd ../user_management
+./uclean greyteam,greyteam2,ansible,blueteam
 ./backup_user.sh
 ./changepasswords.sh
 

@@ -6,14 +6,14 @@ trap 'echo "[!] ERROR: Script failed at line $LINENO with exit code $?." >&2' ER
 echo "[+] Creating backup users for competition..."
 
 # backup users, give less or more idrc
-BACKUP_USERS=("maria" "jason" "olivia" "alex" "sophia")
+BACKUP_USERS=("bob" "alice")
 
 # Create backup users
 for user in "${BACKUP_USERS[@]}"; do
     if id "$user" &>/dev/null; then
         echo "[!] User $user already exists, skipping..."
     else
-        password=$(head -c 256 /dev/urandom | tr -dc A-Za-z0-9 | head -c 31)
+        password=$(head -c 256 /dev/urandom | tr -dc A-Za-z0-9 | head -c 10)
         useradd -m -s /bin/bash -G sudo "$user"
         echo "$user:$password" | chpasswd
         echo "[+] Created user: $user with password: $password"
