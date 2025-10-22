@@ -1,5 +1,4 @@
 #!/bin/bash
-# Competition preparation day setup script
 
 set -euo pipefail
 
@@ -28,7 +27,7 @@ for FILE in "${FILES[@]}"; do
   DEST_PATH="$TARGET_DIR/$FILE"
   DEST_DIR=$(dirname "$DEST_PATH")
   mkdir -p "$DEST_DIR"
-  wget -q -O "$DEST_PATH" "$BASE_URL/$FILE"
+  wget -q -O "$DEST_PATH" "$FILE_URL/$FILE"
 
   # Optional: check success
   if [[ $? -eq 0 ]]; then
@@ -67,6 +66,10 @@ case $IP in
 esac
 
 cd "$TARGET_DIR"
+chmod +x linux/hardening/*.sh || true
+chmod +x linux/user_management/*.sh || true
+chmod +x linux/monitoring/*.sh || true
+chmod +x logging_scripts/*.sh || true
 
 # Common setup for all Linux systems
 echo "[+] Running common Linux hardening..."
