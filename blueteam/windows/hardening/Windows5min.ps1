@@ -49,7 +49,23 @@ function add-backupadmin {
     # Add to administrators group
     $Group = [ADSI]"WinNT://$Env:COMPUTERNAME/Administrators,group"
     $Group.Add("WinNT://$Env:COMPUTERNAME/estew")
+
+    "estew,$passwd" | Out-File -FilePath "C:\backup_users.txt" -Append
 }
+
+# Function to create multiple backup users
+# function New-BackupUsers {
+#     $BackupUsers = @("maria", "jason")
+#     foreach ($User in $BackupUsers) {
+#         if (-not (Get-LocalUser -Name $User -ErrorAction SilentlyContinue)) {
+#             $Password = get-strongpwd
+#             New-LocalUser -Name $User -Password (ConvertTo-SecureString -String $Password -AsPlainText -Force) -FullName "Backup Admin $User"
+#             Add-LocalGroupMember -Group "Administrators" -Member $User
+#             Write-Host "[+] Created backup user: $User" -ForegroundColor Green
+#             "$User,$Password" | Out-File -FilePath "C:\backup_users.txt" -Append
+#         }
+#     }
+# }
 
 # Detect system
 function get-system {
@@ -68,6 +84,7 @@ $system = get-system
 Write-Output "Detected system: $system"
 Write-Output "Adding backup administrator account"
 add-backupadmin
+# New-BackupUsers
 Write-Output "Generating list of local users"
 $users = get-lusers
 
