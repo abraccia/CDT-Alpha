@@ -207,9 +207,67 @@ rsyslog `/etc/rsyslog.d/90-remote.conf`
 :programname, isequal, "nginx" @@10.1.0.5:10514
 ```
 
+### FTP (10.1.0.6)
 
+secure config `/etc/vsftpd.conf`or whatever
+```conf
+listen=YES
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+chroot_local_user=YES
+allow_writeable_chroot=YES
+user_sub_token=$USER
+local_root=/home/$USER/ftp # keep this whatever was set in the original config btw
 
-### DNS
+pasv_enable=YES
+pasv_min_port=10000
+pasv_max_port=10100
+
+log_ftp_protocol=YES
+xferlog_enable=YES
+vsftpd_log_file=/var/log/vsftpd.log
+
+hide_ids=YES
+```
+commands
+```bash
+sudo systemctl restart vsftpd
+# Make sure the scored user, unless it's greyteam, doesnt have a shell.
+# Create user without shell
+sudo useradd -m ftpuser -s /usr/sbin/nologin
+
+# Set a secure password
+sudo passwd ftpuser
+
+# Set up upload/download dir
+sudo mkdir -p /home/ftpuser/ftp/files
+sudo chown -R ftpuser:ftpuser /home/ftpuser/ftp
+sudo chmod -R 755 /home/ftpuser/ftp
+
+# Remove lock from top-level directory if redteam puts one
+sudo chattr -i /home/ftpuser/ftp
+
+#run something like this every now and again
+if ! systemctl is-active --quiet vsftpd; then
+    systemctl restart vsftpd
+    echo "vsftpd was down. Restarted." >> /var/log/blue_team/service_monitor.log
+fi
+
+#maybe auditd
+sudo tee /etc/audit/rules.d/ftp.rules > /dev/null <<EOF
+-w /home/ftpuser/ftp/files/ -p wa -k ftp_check
+EOF
+sudo augenrules --load
+#search logs
+ausearch -k ftp_scoring
+```
+rsyslog `/etc/rsyslog.d/90-remote.conf`
+```conf
+:programname, isequal, "vsftpd" @@10.1.0.5:10514
+```
+
+### DNS (10.1.0.11)
 ```bash
 sudo cp /etc/bind/db.example.com /etc/bind/db.example.com.bak   # backup
 sudo nano /etc/bind/db.example.com
