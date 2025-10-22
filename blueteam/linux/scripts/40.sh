@@ -2,7 +2,7 @@
 # Automated Linux Hardening Script for Competition
 # Run this on all Linux systems during prep day
 
-set -e
+set -euo pipefail
 
 echo "[+] Starting automated Linux hardening..."
 
