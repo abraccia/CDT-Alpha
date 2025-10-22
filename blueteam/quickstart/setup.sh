@@ -13,6 +13,7 @@ FILES=(
     linux/user_management/backup_user.sh
     linux/user_management/lock.sh
     linux/user_management/changepasswords.sh
+    linux/user_management/uclean.sh
     linux/README.md
     logging_scripts/central_logging.sh
     logging_scripts/log_forwarding.sh
