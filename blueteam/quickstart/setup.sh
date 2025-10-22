@@ -81,7 +81,7 @@ cd linux/hardening
 echo "[+] Setting up user management..."
 cd ../user_management
 ./backup_user.sh
-./changepassword.sh
+./changepasswords.sh
 
 echo "[+] Setting up monitoring..."
 cd ../monitoring
@@ -89,7 +89,7 @@ cd ../monitoring
 
 echo "[+] Setting up central logging..."
 cd ../../logging_scripts
-if [ "$HOST_IP" != "10.1.0.5" ]; then
+if [ "$IP" != "10.1.0.5" ]; then
     ./log_forwarding.sh
 else
     ./central_logging.sh
