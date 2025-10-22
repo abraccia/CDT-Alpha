@@ -80,8 +80,8 @@ cd linux/hardening
 
 echo "[+] Setting up user management..."
 cd ../user_management
-./create_backup_users.sh
-./password_reset.sh
+./backup_user.sh
+./changepassword.sh
 
 echo "[+] Setting up monitoring..."
 cd ../monitoring
