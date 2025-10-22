@@ -59,5 +59,5 @@ systemctl restart ssh
 # fi
 
 # Show the current configuration of sshd
-echo "sudo sshd -T"
-sudo sshd -T
+# echo "sudo sshd -T"
+# sudo sshd -T

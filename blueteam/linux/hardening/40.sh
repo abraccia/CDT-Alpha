@@ -43,12 +43,37 @@ ufw allow 21116/udp comment "RustDesk UDP port"
 # ufw allow from 10.1.0.0/24 to any port 80   # HTTP
 # ufw allow from 10.1.0.0/24 to any port 21   # FTP
 # ufw allow from 10.1.0.0/24 to any port 3306 # MySQL
-ufw allow 22 comment "SSH"
-ufw allow 25 comment "SMTP"
-ufw allow 53 comment "DNS"
-ufw allow 80 comment "HTTP"
-ufw allow 21 comment "FTP"
-ufw allow 3306 comment "MySQL"
+case "$HOST_IP" in
+  "10.1.0.2")  # Email Server
+    ufw allow 25/tcp comment "SMTP"
+    ufw allow 22/tcp comment "SSH"
+    ;;
+  "10.1.0.3")  # SSH Server
+    ufw allow 22/tcp comment "SSH"
+    ;;
+  "10.1.0.4")  # MySQL Database
+    ufw allow 3306/tcp comment "MySQL"
+    ufw allow 22/tcp comment "SSH"
+    ;;
+  "10.1.0.5")  # Web Server
+    ufw allow 80/tcp comment "HTTP"
+    ufw allow 22/tcp comment "SSH"
+    ;;
+  "10.1.0.6")  # FTP Server
+    ufw allow 21/tcp comment "FTP"
+    ufw allow 20/tcp comment "FTP Data"
+    ufw allow 22/tcp comment "SSH"
+    ;;
+  "10.1.0.11") # DNS Server
+    ufw allow 53/tcp comment "DNS TCP"
+    ufw allow 53/udp comment "DNS UDP"
+    ufw allow 22/tcp comment "SSH"
+    ;;
+  *)
+    echo "[!] Unknown IP, applying minimal rules" | tee -a "$LOG_DIR/hardening.log"
+    ufw allow 22/tcp comment "SSH"
+    ;;
+esac
 
 ufw --force enable
 
@@ -71,6 +96,24 @@ EOF
 
 systemctl enable auditd
 systemctl restart auditd
+
+# Configure fail2ban
+echo "[+] Configuring fail2ban..."
+cat > /etc/fail2ban/jail.local << 'EOF'
+[DEFAULT]
+bantime = 3600
+findtime = 600
+maxretry = 3
+
+[sshd]
+enabled = true
+port = ssh
+logpath = /var/log/auth.log
+maxretry = 3
+EOF
+
+systemctl enable fail2ban
+systemctl restart fail2ban
 
 # Set up basic logging
 echo "[+] Configuring logging..."

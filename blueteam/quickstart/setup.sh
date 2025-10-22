@@ -14,6 +14,8 @@ FILES=(
     linux/user_management/lock.sh
     linux/user_management/changepasswords.sh
     linux/README.md
+    logging_scripts/central_logging.sh
+    logging_scripts/log_forwarding.sh
     logging_scripts/log_to_syslog_linux.py
     logging_scripts/splunk_setup.sh
     logging_scripts/README.txt
@@ -86,8 +88,12 @@ cd ../monitoring
 ./service_monitor.sh &
 
 echo "[+] Setting up central logging..."
-cd ../../central_logging
-./splunk_setup.sh
+cd ../../logging_scripts
+if [ "$HOST_IP" != "10.1.0.5" ]; then
+    ./log_forwarding.sh
+else
+    ./central_logging.sh
+fi
 
 echo "[=== PREPARATION COMPLETE ==="]
 echo "[+] System hardened"
