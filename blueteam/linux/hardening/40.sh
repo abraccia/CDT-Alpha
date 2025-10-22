@@ -15,7 +15,7 @@ apt-get purge -y telnet rsh-client rsh-redone-client
 
 # Secure SSH script
 echo "[+] Configuring SSH..."
-./../ssh40.sh
+./ssh40.sh
 
 # Configure firewall
 echo "[+] Configuring UFW firewall..."
