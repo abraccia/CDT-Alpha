@@ -43,6 +43,8 @@ ufw allow 21116/udp comment "RustDesk UDP port"
 # ufw allow from 10.1.0.0/24 to any port 80   # HTTP
 # ufw allow from 10.1.0.0/24 to any port 21   # FTP
 # ufw allow from 10.1.0.0/24 to any port 3306 # MySQL
+
+HOST_IP=$(hostname -I | awk '{print $1}')
 case "$HOST_IP" in
   "10.1.0.2")  # Email Server
     ufw allow 25/tcp comment "SMTP"
