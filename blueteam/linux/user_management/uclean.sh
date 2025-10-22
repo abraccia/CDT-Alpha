@@ -24,6 +24,6 @@ echo "$users"
 opt="N"
 read -p "Continue? [y/N]: " opt && [[ $opt == [yY] ]] || exit 1
 for user in $users; do
-  #userdel $user
-  usermod -s /bin/nologin $user # disable user instead of deleting
+  userdel $user
+  #usermod -s /bin/nologin $user # disable user instead of deleting
 done
