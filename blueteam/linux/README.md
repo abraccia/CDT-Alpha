@@ -65,7 +65,11 @@ lsattr /etc/postfix/main.cf /etc/postfix/master.cf
 # Undo
 sudo chattr -i /etc/postfix/main.cf /etc/postfix/master.cf
 # edit files, then re-apply chattr +i
+```
 
+maybe a rsyslog rule in `/etc/rsyslog.d/90-remote.conf`
+```conf
+*.* @@logs.example.com:10514;RSYSLOG_SyslogProtocol23Format
 ```
 
 ### SSH (10.1.0.3) but also any server
@@ -109,6 +113,101 @@ Then
 sudo systemctl daemon-reload
 sudo systemctl restart ssh
 ```
+Once again:
+```bash
+sudo cp /etc/ssh/sshd_config /root/sshd_config.bak
+# Might break, maybe keep it under the ssh user and group
+sudo chown root:root /etc/ssh/sshd_config
+sudo chmod 600 /etc/ssh/sshd_config
+sudo chattr +i /etc/ssh/sshd_config
+```
+
+rsyslog `/etc/rsyslog.d/90-remote.conf`
+```conf
+*.* @@logs.example.com:10514
+```
+
+### MySQL (10.1.0.4)
+Just protect the configs again i guess
+```bash
+# Set correct permissions
+sudo chown root:root /etc/mysql/my.cnf
+sudo chmod 644 /etc/mysql/my.cnf
+sudo chattr +i /etc/mysql/my.cnf
+```
+and enable logging in `/etc/mysql/my.cnf` or `/etc/mysql/mysql.conf.d/mysqld.cnf`
+```conf
+[mysqld]
+general_log = 1
+general_log_file = /var/log/mysql/mysql.log
+log_error = /var/log/mysql/error.log
+```
+Disable root login remotely
+```sql
+DELETE FROM mysql.user WHERE User='root' AND Host!='localhost';
+FLUSH PRIVILEGES;
+```
+Restart
+```bash
+sudo systemctl restart mysql
+```
+
+### HTTP (10.1.0.5)
+`/etc/nginx/nginx.conf`
+```conf
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+
+    types_hash_max_size 2048;
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    gzip on;
+
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}
+```
+Depending on the file
+```bash
+# checked page
+sudo chown root:root /var/www/html/index.html
+sudo chmod 444 /var/www/html/index.html
+sudo chattr +i /var/www/html/index.html
+# config
+sudo chown -R root:root /etc/nginx/
+sudo chmod -R go-w /etc/nginx/
+sudo chattr -R +i /etc/nginx/nginx.conf /etc/nginx/sites-enabled/
+# lock binary
+sudo apt-mark hold nginx
+sudo chattr +i /usr/sbin/nginx
+# logs append only
+sudo chattr +a /var/log/nginx/access.log
+sudo chattr +a /var/log/nginx/error.log
+# look for webshell
+find /var/www/html -name '*.php' -not -name 'index.php' -exec ls -l {} \;
+
+```
+rsyslog `/etc/rsyslog.d/90-remote.conf`
+```conf
+:programname, isequal, "nginx" @@10.1.0.5:10514
+```
+
+
 
 ### DNS
 ```bash
