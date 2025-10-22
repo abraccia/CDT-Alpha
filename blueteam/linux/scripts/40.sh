@@ -34,7 +34,6 @@ lines_to_insert=(
     "TCPKeepAlive no"
     "UseDNS no"
     "LogLevel VERBOSE"
-    "MaxAuthTries 2"
     "MaxSessions 1"
     "PubkeyAuthentication yes"
     "PasswordAuthentication yes"
@@ -43,10 +42,11 @@ lines_to_insert=(
 
 # Replace or add the specified lines in the sshd_config file
 for line in "${lines_to_insert[@]}"; do
-    if ! sudo grep -q "^$line" /etc/ssh/sshd_config; then
-        echo "$line" | sudo tee -a /etc/ssh/sshd_config
+    key=$(echo "$line" | awk '{print $1}')
+    if grep -q "^$key" /etc/ssh/sshd_config; then
+        sed -i "s|^$key.*|$line|" /etc/ssh/sshd_config
     else
-        sudo sed -i "s/^$line.*/$line/" /etc/ssh/sshd_config
+        echo "$line" >> /etc/ssh/sshd_config
     fi
 done
 
