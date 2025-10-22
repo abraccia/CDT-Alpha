@@ -114,6 +114,13 @@ logpath = /var/log/auth.log
 maxretry = 3
 EOF
 
+if ! command -v fail2ban &>/dev/null; then
+    echo "[+] fail2ban not found. Installing..."
+    apt-get install fail2ban -y
+else
+    echo "[+] fail2ban is already installed."
+fi
+
 systemctl enable fail2ban
 systemctl restart fail2ban
 
