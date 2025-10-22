@@ -45,19 +45,19 @@ for line in "${lines_to_insert[@]}"; do
     fi
 done
 
-systemctl restart ssh
+# systemctl restart ssh
 
-# # Ask if the user wants to restart the SSH service
-# read -p "Do you want to restart the SSH service? (y/n): " response
+# Ask if the user wants to restart the SSH service
+read -p "Do you want to restart the SSH service? (y/n): " response
 
-# # Verify the response
-# if [[ $response == "y" ]]; then
-#     # Restart the sshd service
-#     sudo service ssh restart
-# else
-#     echo "Operation cancelled."
-# fi
+# Verify the response
+if [[ $response == "y" ]]; then
+    # Restart the sshd service
+    sudo service ssh restart
+else
+    echo "Operation cancelled."
+fi
 
-# Show the current configuration of sshd
-# echo "sudo sshd -T"
-# sudo sshd -T
+Show the current configuration of sshd
+echo "sudo sshd -T"
+sudo sshd -T
