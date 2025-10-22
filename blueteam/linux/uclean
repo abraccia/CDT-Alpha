@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # TODO
-# - Ask for confirmation
-#   - Present list of users to delete
-#   - Wait for user input [y,N] before deleting
 
 # uclean user[,user,[...]]
 # This script deletes all (non-system) users not on an explicit whitelist 
@@ -27,7 +24,6 @@ echo "$users"
 opt="N"
 read -p "Continue? [y/N]: " opt && [[ $opt == [yY] ]] || exit 1
 for user in $users; do
-  echo $user
   #userdel $user
-  #usermod -s /bin/nologin $user # disable user instead of deleting
+  usermod -s /bin/nologin $user # disable user instead of deleting
 done
