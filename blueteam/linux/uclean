@@ -24,6 +24,10 @@ filter="$(sed 's/,/|/g' <<< "$1")"
 users=$(cat /etc/passwd | awk -v filter="${filter}" -F ':' '$1 !~ filter {print $0}' | awk -F ':' '/1[0-9]{3}/{print $1}')
 echo "Users to be deleted:"
 echo "$users"
+opt="N"
+read -p "Continue? [y/N]: " opt && [[ $opt == [yY] ]] || exit 1
 for user in $users; do
   echo $user
+  #userdel $user
+  #usermod -s /bin/nologin $user # disable user instead of deleting
 done
