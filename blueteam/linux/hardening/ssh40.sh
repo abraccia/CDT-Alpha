@@ -58,6 +58,6 @@ else
     echo "Operation cancelled."
 fi
 
-Show the current configuration of sshd
-echo "sudo sshd -T"
-sudo sshd -T
+# Show the current configuration of sshd
+# echo "sudo sshd -T"
+# sudo sshd -T
