@@ -103,13 +103,9 @@ Write-Output "Configuring Windows Firewall"
 #Powershell version
 Write-Output "Adding outbound rules to prevent LOLBins."
 $blockedPrograms = @(
-    "notepad.exe",
-    "regsvr32.exe", 
-    "calc.exe",
-    "mshta.exe",
-    "wscript.exe",
-    "cscript.exe",
-    "runscripthelper.exe"
+    "notepad.exe", "regsvr32.exe", "calc.exe", "mshta.exe",
+    "wscript.exe", "cscript.exe", "runscripthelper.exe",
+    "msbuild.exe", "installutil.exe", "regasm.exe", "regsvcs.exe"
 )
 foreach ($program in $blockedPrograms) {
     $params = @{
@@ -127,6 +123,34 @@ foreach ($program in $blockedPrograms) {
     }
 }
 
+# Rustdesk should be allowed regardless (https://github.com/rustdesk/rustdesk/commit/f47f2a91512feba30f0907f08690bbbae2311e75), but just in case
+$rustdeskTCPRules = @(
+    @{Name="RustDesk-TCP-21114"; Port=21114},
+    @{Name="RustDesk-TCP-21115"; Port=21115},
+    @{Name="RustDesk-TCP-21116"; Port=21116},
+    @{Name="RustDesk-TCP-21117"; Port=21117},
+    @{Name="RustDesk-TCP-21118"; Port=21118},
+    @{Name="RustDesk-TCP-21119"; Port=21119}
+)
+
+$rustdeskUDPRules = @(
+    @{Name="RustDesk-UDP-21116"; Port=21116}
+)
+
+foreach ($rule in $rustdeskTCPRules) {
+    if (-not (Get-NetFirewallRule -DisplayName $rule.Name -ErrorAction SilentlyContinue)) {
+        New-NetFirewallRule -DisplayName $rule.Name -Direction Inbound -Protocol TCP -LocalPort $rule.Port -Action Allow -Enabled True
+        Write-Host "- Added TCP rule: $($rule.Name)"
+    }
+}
+
+foreach ($rule in $rustdeskUDPRules) {
+    if (-not (Get-NetFirewallRule -DisplayName $rule.Name -ErrorAction SilentlyContinue)) {
+        New-NetFirewallRule -DisplayName $rule.Name -Direction Inbound -Protocol UDP -LocalPort $rule.Port -Action Allow -Enabled True
+        Write-Host "- Added UDP rule: $($rule.Name)"
+    }
+}
+
 # add rules to filter inbound
 #Commented out just to be used as a reference
 # $Params = @{ "DisplayName" = "Block-Inbound-SMB-445"
@@ -134,7 +158,7 @@ foreach ($program in $blockedPrograms) {
 #              "Port" = "445"}
 # New-NetFirewallRule @Params
 
-#enable firewall
+#enable firewall, this terrifies me
 if ($system -eq "Domain Controller") {
     # Less restrictive for DC
     $Params = @{

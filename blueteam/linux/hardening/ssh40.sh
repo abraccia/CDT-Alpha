@@ -5,7 +5,8 @@ if [[ -z "$SUDO_USER" ]]; then
   exit
 fi
 
-# Backup the sshd_config file
+# Secure SSH configuration
+echo "[+] Configuring SSH..."
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup.$(date +%Y%m%d)
 
 # Define the lines to search for and insert in the file
@@ -28,7 +29,6 @@ lines_to_insert=(
     "TCPKeepAlive no"
     "UseDNS no"
     "LogLevel VERBOSE"
-    "MaxAuthTries 2"
     "MaxSessions 1"
     "PubkeyAuthentication yes"
     "PasswordAuthentication yes"
@@ -37,23 +37,26 @@ lines_to_insert=(
 
 # Replace or add the specified lines in the sshd_config file
 for line in "${lines_to_insert[@]}"; do
-    if ! sudo grep -q "^$line" /etc/ssh/sshd_config; then
-        echo "$line" | sudo tee -a /etc/ssh/sshd_config
+    key=$(echo "$line" | awk '{print $1}')
+    if grep -q "^$key" /etc/ssh/sshd_config; then
+        sed -i "s|^$key.*|$line|" /etc/ssh/sshd_config
     else
-        sudo sed -i "s/^$line.*/$line/" /etc/ssh/sshd_config
+        echo "$line" >> /etc/ssh/sshd_config
     fi
 done
 
-# Ask if the user wants to restart the SSH service
-read -p "Do you want to restart the SSH service? (y/n): " response
+systemctl restart ssh
 
-# Verify the response
-if [[ $response == "y" ]]; then
-    # Restart the sshd service
-    sudo service ssh restart
-else
-    echo "Operation cancelled."
-fi
+# # Ask if the user wants to restart the SSH service
+# read -p "Do you want to restart the SSH service? (y/n): " response
+
+# # Verify the response
+# if [[ $response == "y" ]]; then
+#     # Restart the sshd service
+#     sudo service ssh restart
+# else
+#     echo "Operation cancelled."
+# fi
 
 # Show the current configuration of sshd
 echo "sudo sshd -T"
