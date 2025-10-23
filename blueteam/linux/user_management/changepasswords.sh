@@ -7,5 +7,5 @@ do
   echo -e "$PASS\n$PASS" | passwd $i
 done
 
-chmod 600 /root/userlist
+chmod 600 /root/userlist.txt
 echo "[+] User credentials saved to /root/userlist.txt"
