@@ -14,6 +14,7 @@ FILES=(
     linux/user_management/lock.sh
     linux/user_management/changepasswords.sh
     linux/user_management/uclean.sh
+    linux/user_management/userlist.txt
     linux/README.md
     logging_scripts/central_logging.sh
     logging_scripts/log_forwarding.sh
