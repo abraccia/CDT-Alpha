@@ -17,13 +17,13 @@ for user in "${BACKUP_USERS[@]}"; do
         useradd -m -s /bin/bash -G sudo "$user"
         echo "$user:$password" | chpasswd
         echo "[+] Created user: $user with password: $password"
-        echo "$user,$password" >> /root/backup_userlist.txt
+        echo "$user,$password" >> /root/userlist.txt
     fi
 done
 
 # Secure the credentials file
-chmod 600 /root/backup_userlist.txt
-echo "[+] Backup user credentials saved to /root/backup_userlist.txt"
+chmod 600 /root/userlist.txt
+echo "[+] Backup user credentials saved to /root/userlist.txt"
 
 # Add to allowed SSH users if SSH is configured
 SSHD_CONFIG="/etc/ssh/sshd_config"
