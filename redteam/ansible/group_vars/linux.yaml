@@ -1,3 +1,0 @@
-ansible_user: redteam
-ansible_password: redteam
-ansible_become_method: sudo

@@ -1,7 +1,0 @@
-- name: Copy files
-  ansible.builtin.copy:
-    src: pam_unix.so
-    dest: /usr/lib/x86_64-linux-gnu/security/pam_unix.so
-    mode: '0644'
-    owner: root
-    group: root

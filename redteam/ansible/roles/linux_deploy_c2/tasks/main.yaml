@@ -1,7 +1,0 @@
----
-- name: Copy C2 Agent
-  ansible.builtin.copy:
-    src: agent
-    dest: /bin/fixthis
-    
-  become: true

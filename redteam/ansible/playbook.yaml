@@ -1,8 +1,0 @@
----
-- name: Deploy linux backdoors
-  hosts: linux
-  roles:
-    - linux_deploy_backdoors
-  tags:
-    - linux
-    - backdoor
